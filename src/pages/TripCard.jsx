@@ -29,8 +29,13 @@ export default function TripCard() {
     return bars
   }
 
+  // An unfinished "I have time" trip ends at the last checkpoint reached
+  const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint
+  const distance = trip.canComplete ? trip.distance : trip.reachableDistance
+  const days = trip.minDays === trip.maxDays ? `${trip.minDays}` : `${trip.minDays}-${trip.maxDays}`
+
   const handleShare = async () => {
-    const text = `TIPROUTE Challenge\n${trip.country}: ${trip.startPoint} \u2192 ${trip.endPoint}\n${trip.transport.emoji} ${trip.transport.name} | ${trip.minDays}-${trip.maxDays} days | $${trip.totalBudget}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
+    const text = `TIPROUTE Challenge\n${trip.country}: ${trip.startPoint} \u2192 ${endPoint}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
 
     if (navigator.share) {
       try {
@@ -39,8 +44,12 @@ export default function TripCard() {
         // User cancelled
       }
     } else {
-      await navigator.clipboard.writeText(text)
-      alert('Trip card copied to clipboard!')
+      try {
+        await navigator.clipboard.writeText(text)
+        alert('Trip card copied to clipboard!')
+      } catch {
+        alert("Couldn't copy the trip card. Your browser blocked clipboard access.")
+      }
     }
   }
 
@@ -64,23 +73,21 @@ export default function TripCard() {
           <div className="card-arrow">{'\u2193'}</div>
           <div className="card-point end">
             <span className="point-dot">{'\u{1F534}'}</span>
-            <span>{trip.endPoint}</span>
+            <span>{endPoint}</span>
           </div>
         </div>
 
         <div className="card-stats">
           <div className="card-stat">
-            <span className="card-stat-value">{trip.distance.toLocaleString()} km</span>
+            <span className="card-stat-value">{distance.toLocaleString()} km</span>
             <span className="card-stat-label">Distance</span>
           </div>
           <div className="card-stat">
-            <span className="card-stat-value">
-              {trip.minDays === trip.maxDays ? trip.minDays : `${trip.minDays}-${trip.maxDays}`}
-            </span>
+            <span className="card-stat-value">{days}</span>
             <span className="card-stat-label">Days</span>
           </div>
           <div className="card-stat">
-            <span className="card-stat-value">${trip.totalBudget}</span>
+            <span className="card-stat-value">${trip.totalBudget.toLocaleString()}</span>
             <span className="card-stat-label">Budget</span>
           </div>
         </div>

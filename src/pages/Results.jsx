@@ -103,7 +103,7 @@ export default function Results() {
         </div>
       )}
 
-      {trip.canComplete && trip.reachableDistance >= trip.distance && (
+      {trip.planningMode === 'time' && trip.canComplete && (
         <div className="completion-success">
           <p>
             {'\u2705'} You can complete the full tip-to-tip! With {trip.avgDays} days by{' '}

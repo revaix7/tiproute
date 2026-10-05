@@ -30,6 +30,7 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
       difficulty,
       checkpoints,
       transport: mode,
+      planningMode,
       canComplete: true,
       reachableDistance: distance,
       reachableCheckpoint: checkpoints[checkpoints.length - 1],
@@ -50,10 +51,14 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
     const reachableCheckpoint = checkpoints[segmentsReachable]
     const reachedCheckpoints = checkpoints.slice(0, segmentsReachable + 1)
 
-    const dailyTotalCost = mode.dailyCost + avgKmPerDay * mode.costPerKm + dailyBudget
-    const totalBudget = dailyTotalCost * tripDays
+    // Transport costs stop once the route is finished; living costs cover every day
+    const coveredDistance = Math.min(reachableDistance, distance)
+    const travelDays = canComplete ? Math.ceil(distance / avgKmPerDay) : tripDays
+    const transportCost = mode.dailyCost * travelDays + coveredDistance * mode.costPerKm
+    const totalBudget = transportCost + dailyBudget * tripDays
+    const dailyTotalCost = totalBudget / tripDays
 
-    const difficulty = getDifficulty(mode.difficulty, Math.min(reachableDistance, distance), tripDays)
+    const difficulty = getDifficulty(mode.difficulty, coveredDistance, travelDays)
 
     return {
       startPoint: country.tipToTip.start.name,
@@ -70,8 +75,9 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
       checkpoints: reachedCheckpoints,
       allCheckpoints: checkpoints,
       transport: mode,
+      planningMode,
       canComplete,
-      reachableDistance: Math.min(reachableDistance, distance),
+      reachableDistance: coveredDistance,
       reachableCheckpoint,
     }
   }
