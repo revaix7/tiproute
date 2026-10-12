@@ -67,12 +67,12 @@ export default function TripCard() {
 
         <div className="card-route">
           <div className="card-point start">
-            <span className="point-dot">{'\u{1F7E2}'}</span>
+            <span className="point-label">From</span>
             <span>{trip.startPoint}</span>
           </div>
           <div className="card-arrow">{'\u2193'}</div>
           <div className="card-point end">
-            <span className="point-dot">{'\u{1F534}'}</span>
+            <span className="point-label">To</span>
             <span>{endPoint}</span>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function TripCard() {
         </div>
 
         <div className="card-footer">
-          <span className="card-brand">{'\u{1F30D}'} TipRoute</span>
+          <span className="card-brand">TipRoute</span>
         </div>
       </div>
 

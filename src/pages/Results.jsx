@@ -17,11 +17,11 @@ export default function Results() {
   }
 
   const difficultyColor = {
-    Easy: '#4ade80',
-    Moderate: '#facc15',
-    Challenging: '#fb923c',
-    Hard: '#f87171',
-    Extreme: '#ef4444',
+    Easy: '#15803d',
+    Moderate: '#a16207',
+    Challenging: '#c2410c',
+    Hard: '#b91c1c',
+    Extreme: '#7f1d1d',
   }
 
   // Only "I have time" trips have a fixed day count
@@ -39,7 +39,6 @@ export default function Results() {
       <div className="results-grid">
         {/* Key Stats */}
         <div className="stat-card">
-          <span className="stat-icon">{'\u{1F4CF}'}</span>
           <div className="stat-info">
             <span className="stat-value">{trip.distance.toLocaleString()} km</span>
             <span className="stat-label">Total Distance</span>
@@ -47,7 +46,6 @@ export default function Results() {
         </div>
 
         <div className="stat-card">
-          <span className="stat-icon">{'\u{23F1}\uFE0F'}</span>
           <div className="stat-info">
             <span className="stat-value">
               {trip.minDays === trip.maxDays
@@ -59,7 +57,6 @@ export default function Results() {
         </div>
 
         <div className="stat-card">
-          <span className="stat-icon">{trip.transport.emoji}</span>
           <div className="stat-info">
             <span className="stat-value">{trip.transport.name}</span>
             <span className="stat-label">Transport</span>
@@ -67,7 +64,6 @@ export default function Results() {
         </div>
 
         <div className="stat-card">
-          <span className="stat-icon">{'\u{1F4B0}'}</span>
           <div className="stat-info">
             <span className="stat-value">${trip.totalBudget.toLocaleString()}</span>
             <span className="stat-label">Est. Total Budget</span>
@@ -75,7 +71,6 @@ export default function Results() {
         </div>
 
         <div className="stat-card">
-          <span className="stat-icon">{'\u{1F4B5}'}</span>
           <div className="stat-info">
             <span className="stat-value">${trip.dailyCost}/day</span>
             <span className="stat-label">Daily Cost</span>
@@ -83,7 +78,6 @@ export default function Results() {
         </div>
 
         <div className="stat-card difficulty-card">
-          <span className="stat-icon">{'\u{26A0}\uFE0F'}</span>
           <div className="stat-info">
             <span
               className="stat-value"
@@ -100,7 +94,7 @@ export default function Results() {
       {!trip.canComplete && (
         <div className="completion-warning">
           <p>
-            {'\u{26A0}\uFE0F'} With {trip.avgDays} days by {trip.transport.name.toLowerCase()}, you'd cover ~
+            With {trip.avgDays} days by {trip.transport.name.toLowerCase()}, you'd cover ~
             {trip.reachableDistance.toLocaleString()} km and reach <strong>{trip.reachableCheckpoint}</strong>.
             That's {Math.round((trip.reachableDistance / trip.distance) * 100)}% of the full route.
           </p>
@@ -110,7 +104,7 @@ export default function Results() {
       {trip.planningMode === 'time' && trip.canComplete && (
         <div className="completion-success">
           <p>
-            {'\u2705'} You can complete the full tip-to-tip! With {trip.avgDays} days by{' '}
+            You can complete the full tip-to-tip! With {trip.avgDays} days by{' '}
             {trip.transport.name.toLowerCase()}, you've got enough time to make it all the way.
           </p>
         </div>
@@ -122,11 +116,8 @@ export default function Results() {
         <div className="checkpoint-list">
           {trip.checkpoints.map((cp, i) => (
             <div key={cp} className="checkpoint">
-              <div className="checkpoint-marker">
-                {i === 0 ? '\u{1F7E2}' : i === trip.checkpoints.length - 1 ? '\u{1F534}' : '\u{1F7E1}'}
-              </div>
+              <span className="checkpoint-marker">{String(i + 1).padStart(2, '0')}</span>
               <span className="checkpoint-name">{cp}</span>
-              {i < trip.checkpoints.length - 1 && <div className="checkpoint-line" />}
             </div>
           ))}
         </div>
@@ -150,7 +141,7 @@ export default function Results() {
                 className={`comparison-row ${option.id === trip.transport.id ? 'selected' : ''}`}
               >
                 <span className="comparison-mode">
-                  {option.emoji} {option.name}
+                  <span className="comparison-emoji">{option.emoji}</span> {option.name}
                   {option.isCheapest && <span className="comparison-tag">Cheapest</span>}
                   {option.isFastest && (
                     <span className="comparison-tag">{isTimeMode ? 'Farthest' : 'Fastest'}</span>

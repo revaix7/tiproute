@@ -52,13 +52,13 @@ export default function Planner() {
           className={`mode-btn ${planningMode === 'route' ? 'active' : ''}`}
           onClick={() => setPlanningMode('route')}
         >
-          {'\u{1F4CD}'} I have a route
+          I have a route
         </button>
         <button
           className={`mode-btn ${planningMode === 'time' ? 'active' : ''}`}
           onClick={() => setPlanningMode('time')}
         >
-          {'\u{1F4C5}'} I have time
+          I have time
         </button>
       </div>
 

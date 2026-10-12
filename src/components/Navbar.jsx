@@ -6,7 +6,6 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-brand">
-        <span className="brand-icon">{'\u{1F30D}'}</span>
         <span className="brand-text">TipRoute</span>
       </Link>
       <div className="navbar-links">
