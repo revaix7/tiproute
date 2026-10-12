@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { countries, transportModes } from '../data/countries'
-import { calculateTrip } from '../data/tripCalculator'
+import { calculateTrip, compareTransportModes } from '../data/tripCalculator'
+
+// Long enough to walk the longest route at the slowest pace
+const MAX_TRIP_DAYS = Math.ceil(
+  Math.max(...countries.map((c) => c.tipToTip.distanceKm)) /
+    Math.min(...transportModes.map((t) => t.kmPerDay.min))
+)
 
 export default function Planner() {
   const navigate = useNavigate()
@@ -22,7 +28,15 @@ export default function Planner() {
       tripDays,
     })
 
-    navigate('/results', { state: { trip: result } })
+    const comparison = compareTransportModes({
+      country: selectedCountry,
+      transportModes,
+      dailyBudget,
+      planningMode,
+      tripDays,
+    })
+
+    navigate('/results', { state: { trip: result, comparison } })
   }
 
   return (
@@ -117,7 +131,7 @@ export default function Planner() {
               <input
                 type="range"
                 min="1"
-                max="30"
+                max={MAX_TRIP_DAYS}
                 step="1"
                 value={tripDays}
                 onChange={(e) => setTripDays(Number(e.target.value))}
@@ -126,7 +140,7 @@ export default function Planner() {
               <div className="slider-value">{tripDays} {tripDays === 1 ? 'day' : 'days'}</div>
               <div className="slider-labels">
                 <span>Weekend (1)</span>
-                <span>Full Month (30)</span>
+                <span>Long Haul ({MAX_TRIP_DAYS})</span>
               </div>
             </div>
           </div>

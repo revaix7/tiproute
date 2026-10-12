@@ -99,3 +99,30 @@ function getDifficulty(baseDifficulty, distance, days) {
 
   return { score, label }
 }
+
+// Run the same trip through every transport mode so they can be compared side by side
+export function compareTransportModes({ country, transportModes, dailyBudget, planningMode, tripDays }) {
+  const trips = transportModes.map((transportMode) =>
+    calculateTrip({ country, transportMode, dailyBudget, planningMode, tripDays })
+  )
+
+  const cheapest = Math.min(...trips.map((t) => t.totalBudget))
+  const fastest = Math.min(...trips.map((t) => t.avgDays))
+  const farthest = Math.max(...trips.map((t) => t.reachableDistance))
+
+  return trips.map((t) => ({
+    id: t.transport.id,
+    name: t.transport.name,
+    emoji: t.transport.emoji,
+    minDays: t.minDays,
+    maxDays: t.maxDays,
+    totalBudget: t.totalBudget,
+    difficulty: t.difficulty,
+    canComplete: t.canComplete,
+    reachableDistance: t.reachableDistance,
+    percentOfRoute: Math.round((t.reachableDistance / t.distance) * 100),
+    isCheapest: t.totalBudget === cheapest,
+    // With a fixed number of days every mode takes the same time, so rank by distance instead
+    isFastest: planningMode === 'route' ? t.avgDays === fastest : t.reachableDistance === farthest,
+  }))
+}

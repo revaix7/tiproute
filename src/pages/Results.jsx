@@ -4,6 +4,7 @@ export default function Results() {
   const location = useLocation()
   const navigate = useNavigate()
   const trip = location.state?.trip
+  const comparison = location.state?.comparison
 
   if (!trip) {
     return (
@@ -22,6 +23,9 @@ export default function Results() {
     Hard: '#f87171',
     Extreme: '#ef4444',
   }
+
+  // Only "I have time" trips have a fixed day count
+  const isTimeMode = trip.minDays === trip.maxDays
 
   return (
     <div className="results">
@@ -127,6 +131,45 @@ export default function Results() {
           ))}
         </div>
       </div>
+
+      {/* Transport Comparison */}
+      {comparison && (
+        <div className="comparison-section">
+          <h2>Compare Your Options</h2>
+          <p className="section-note">Same route and daily budget, every way to travel</p>
+          <div className="comparison-table">
+            <div className="comparison-row comparison-head">
+              <span>Transport</span>
+              <span>{isTimeMode ? 'Distance' : 'Time'}</span>
+              <span>Budget</span>
+              <span>Difficulty</span>
+            </div>
+            {comparison.map((option) => (
+              <div
+                key={option.id}
+                className={`comparison-row ${option.id === trip.transport.id ? 'selected' : ''}`}
+              >
+                <span className="comparison-mode">
+                  {option.emoji} {option.name}
+                  {option.isCheapest && <span className="comparison-tag">Cheapest</span>}
+                  {option.isFastest && (
+                    <span className="comparison-tag">{isTimeMode ? 'Farthest' : 'Fastest'}</span>
+                  )}
+                </span>
+                <span>
+                  {isTimeMode
+                    ? `${option.reachableDistance.toLocaleString()} km (${option.percentOfRoute}%)`
+                    : `${option.minDays}–${option.maxDays} days`}
+                </span>
+                <span>${option.totalBudget.toLocaleString()}</span>
+                <span style={{ color: difficultyColor[option.difficulty.label] }}>
+                  {option.difficulty.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="results-actions">
