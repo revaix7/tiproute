@@ -1,25 +1,18 @@
 /* ============================================
-   TipRoute — Adventure-Rugged Theme
-   Dark earthy tones, bold typography
+   TipRoute — Editorial Theme
+   White page, black type, thin rules
    ============================================ */
 
 :root {
-  --bg-dark: #1a1612;
-  --bg-card: #241f1a;
-  --bg-card-hover: #2e2823;
-  --bg-selected: #3d3228;
-  --text-primary: #f5e6d3;
-  --text-secondary: #b8a48e;
-  --text-muted: #7a6b5a;
-  --accent: #d4873e;
-  --accent-hover: #e69a4d;
-  --accent-glow: rgba(212, 135, 62, 0.2);
-  --success: #4ade80;
-  --warning: #fb923c;
-  --danger: #ef4444;
-  --border: #3a322a;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg: #ffffff;
+  --bg-soft: #f2f2f2;
+  --ink: #000000;
+  --ink-soft: #4d4d4d;
+  --ink-muted: #8a8a8a;
+  --rule: #000000;
+  --rule-soft: #d9d9d9;
+  --page-width: 1280px;
+  --page-pad: 2rem;
 }
 
 * {
@@ -30,10 +23,19 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-primary);
+  background: var(--bg);
+  color: var(--ink);
   line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 /* ============================================
@@ -42,359 +44,359 @@ body {
 
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
-  background: rgba(26, 22, 18, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  align-items: center;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 1.5rem var(--page-pad);
+  background: var(--bg);
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   text-decoration: none;
-  color: var(--text-primary);
-}
-
-.brand-icon {
-  font-size: 1.5rem;
+  color: var(--ink);
 }
 
 .brand-text {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  letter-spacing: 2px;
-  color: var(--accent);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 
 .navbar-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .navbar-links a {
+  color: var(--ink);
   text-decoration: none;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: color 0.2s;
+  font-size: 1.05rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
 }
 
 .navbar-links a:hover,
 .navbar-links a.active {
-  color: var(--accent);
+  border-bottom-color: var(--ink);
 }
 
 /* ============================================
-   HOME / HERO
+   BUTTONS
    ============================================ */
 
-.home {
-  min-height: calc(100vh - 60px);
-}
-
-.hero {
-  padding: 4rem 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.hero-content {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.hero-tagline {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+.cta-button,
+.secondary-button {
+  display: inline-block;
+  padding: 1.1rem 2.5rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-
-.hero-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 12vw, 8rem);
-  letter-spacing: 8px;
-  line-height: 1;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-  text-shadow: 0 0 60px var(--accent-glow);
-}
-
-.hero-subtitle {
-  font-size: 1.15rem;
-  color: var(--text-secondary);
-  max-width: 550px;
-  margin: 0 auto 2.5rem;
-  line-height: 1.7;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
 .cta-button {
-  display: inline-block;
-  padding: 1rem 2.5rem;
-  background: var(--accent);
-  color: var(--bg-dark);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 2px;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
+  background: var(--ink);
+  color: var(--bg);
 }
 
-.cta-button:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px var(--accent-glow);
+.cta-button:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--ink);
 }
 
 .cta-button:disabled {
-  opacity: 0.4;
+  background: var(--bg-soft);
+  border-color: var(--rule-soft);
+  color: var(--ink-muted);
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+}
+
+.secondary-button {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.secondary-button:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ============================================
+   HOME
+   ============================================ */
+
+.home,
+.planner,
+.results,
+.trip-card-page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--page-pad) 5rem;
+}
+
+.hero {
+  border-top: 1px solid var(--rule);
+}
+
+.hero-title {
+  /* Sized so the three words span the full page width */
+  font-size: min(calc((100vw - 2 * var(--page-pad)) * 0.216), 16.4rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 1.5rem 0 1rem;
+}
+
+.hero-tagline {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.7rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-intro {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  align-items: end;
+  padding: 4rem 0;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.hero-intro .cta-button {
+  justify-self: end;
 }
 
 .hero-features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 2rem;
 }
 
-.feature-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2rem 1.5rem;
-  text-align: center;
-  transition: all 0.2s;
-}
-
-.feature-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-}
-
-.feature-icon {
-  font-size: 2.5rem;
+.feature-number {
   display: block;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 2.5rem;
 }
 
 .feature-card h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .feature-card p {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
 }
 
 /* ============================================
    PLANNER
    ============================================ */
 
-.planner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem;
+.planner-header,
+.results-header {
+  border-top: 1px solid var(--rule);
+  padding: 2rem 0 3rem;
 }
 
-.planner-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.planner-header h1,
+.results-header h1,
+.trip-card-page > h1,
+.empty-state h1 {
+  font-size: clamp(2.75rem, 9vw, 7.5rem);
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
 }
 
-.planner-header h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3rem;
-  letter-spacing: 3px;
-  color: var(--text-primary);
+.planner-header p,
+.results-route,
+.trip-card-subtitle,
+.empty-state p {
+  font-size: 1.15rem;
+  color: var(--ink-soft);
 }
 
-.planner-header p {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-}
-
-/* Mode Toggle */
 .mode-toggle {
   display: flex;
-  gap: 0;
-  margin: 0 auto 2.5rem;
-  max-width: 400px;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  overflow: hidden;
+  margin-bottom: 3rem;
 }
 
 .mode-btn {
   flex: 1;
-  padding: 0.8rem 1rem;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
+  padding: 1.1rem 1.5rem;
+  font-family: inherit;
   font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--ink);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
+}
+
+.mode-btn + .mode-btn {
+  border-left: none;
+}
+
+.mode-btn:hover {
+  background: var(--bg-soft);
 }
 
 .mode-btn.active {
-  background: var(--accent);
-  color: var(--bg-dark);
+  background: var(--ink);
+  color: var(--bg);
 }
 
-/* Planner Grid */
-.planner-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  margin-bottom: 2.5rem;
+.planner-section {
+  border-top: 1px solid var(--rule);
+  padding: 2rem 0 3.5rem;
 }
 
-.planner-section h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  color: var(--text-primary);
+.planner-section h2,
+.checkpoints-section h2,
+.comparison-section h2 {
+  font-size: 2.25rem;
   margin-bottom: 0.5rem;
 }
 
 .section-note {
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
   margin-bottom: 1rem;
 }
 
 /* Country Grid */
 .country-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+}
+
+.country-card,
+.transport-card {
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+  text-align: left;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--rule-soft);
+  border-radius: 0;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 
 .country-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.3rem;
-  padding: 1rem 1.25rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: left;
+  gap: 0.35rem;
+  padding: 1.25rem;
 }
 
-.country-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--text-muted);
+.country-card:hover,
+.transport-card:hover {
+  border-color: var(--ink);
 }
 
-.country-card.selected {
-  background: var(--bg-selected);
-  border-color: var(--accent);
-  box-shadow: 0 0 20px var(--accent-glow);
+.country-card.selected,
+.transport-card.selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
 }
 
 .country-name {
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .country-distance {
   font-size: 0.8rem;
-  color: var(--accent);
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.country-route {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+.country-route,
+.transport-desc {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.country-card.selected .country-route,
+.transport-card.selected .transport-desc {
+  color: #bdbdbd;
 }
 
 /* Transport Grid */
 .transport-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 .transport-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 1.25rem 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
-
-.transport-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--text-muted);
-}
-
-.transport-card.selected {
-  background: var(--bg-selected);
-  border-color: var(--accent);
-  box-shadow: 0 0 20px var(--accent-glow);
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem;
 }
 
 .transport-emoji {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  line-height: 1;
+  filter: grayscale(1);
+  margin-bottom: 1rem;
 }
 
 .transport-name {
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
-.transport-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-/* Budget Slider */
+/* Sliders */
 .slider-container {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .budget-slider {
   width: 100%;
-  height: 6px;
+  height: 2px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--border);
-  border-radius: 3px;
+  background: var(--ink);
   outline: none;
 }
 
@@ -402,222 +404,151 @@ body {
   -webkit-appearance: none;
   width: 22px;
   height: 22px;
-  background: var(--accent);
+  background: var(--ink);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .budget-slider::-moz-range-thumb {
   width: 22px;
   height: 22px;
-  background: var(--accent);
+  background: var(--ink);
+  border: none;
   border-radius: 50%;
   cursor: pointer;
-  border: none;
+}
+
+.budget-slider:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 10px;
 }
 
 .slider-value {
-  text-align: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2rem;
-  letter-spacing: 1px;
-  color: var(--accent);
-  margin: 0.75rem 0 0.5rem;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin: 1.5rem 0 0.75rem;
 }
 
 .slider-labels {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
 /* Plan Button */
 .plan-action {
-  text-align: center;
-  padding: 1rem 0 3rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 2rem;
 }
 
 .plan-button {
-  font-size: 1.4rem;
-  padding: 1.1rem 3rem;
+  width: 100%;
+  padding: 1.4rem 2rem;
+  font-size: 1rem;
 }
 
 /* ============================================
    RESULTS
    ============================================ */
 
-.results {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.results.empty-state,
-.trip-card-page.empty-state {
-  text-align: center;
-  padding-top: 6rem;
-}
-
-.results.empty-state h1,
-.trip-card-page.empty-state h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 2px;
-  margin-bottom: 0.5rem;
-}
-
-.results.empty-state p,
-.trip-card-page.empty-state p {
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
-}
-
-.results-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.results-header h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3rem;
-  letter-spacing: 3px;
-}
-
-.results-route {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  margin-top: 0.25rem;
-}
-
-/* Stats Grid */
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 .stat-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.25rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-.stat-icon {
-  font-size: 2rem;
+  border-top: 1px solid var(--rule);
+  padding: 1.25rem 0 2rem;
 }
 
 .stat-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  gap: 0.75rem;
 }
 
 .stat-value {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--text-primary);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.stat-label,
+.card-stat-label,
+.diff-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 /* Completion Status */
 .completion-warning,
 .completion-success {
-  padding: 1.25rem;
-  border-radius: var(--radius);
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 3rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
 }
 
 .completion-warning {
-  background: rgba(251, 146, 60, 0.1);
-  border: 1px solid rgba(251, 146, 60, 0.3);
-  color: var(--warning);
+  border: 1px solid var(--ink);
 }
 
 .completion-success {
-  background: rgba(74, 222, 128, 0.1);
-  border: 1px solid rgba(74, 222, 128, 0.3);
-  color: var(--success);
+  background: var(--ink);
+  color: var(--bg);
 }
 
 /* Checkpoints */
-.checkpoints-section {
-  margin-bottom: 2.5rem;
-}
-
-.checkpoints-section h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
+.checkpoints-section,
+.comparison-section {
+  border-top: 1px solid var(--rule);
+  padding: 2rem 0 3.5rem;
 }
 
 .checkpoint-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding-left: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .checkpoint {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  position: relative;
-  padding: 0.5rem 0;
+  align-items: baseline;
+  gap: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.checkpoint:last-child {
+  border-bottom: none;
 }
 
 .checkpoint-marker {
-  font-size: 0.9rem;
-  width: 24px;
-  text-align: center;
+  width: 2.5rem;
   flex-shrink: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
 .checkpoint-name {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-}
-
-.checkpoint-line {
-  position: absolute;
-  left: 11px;
-  top: 28px;
-  width: 2px;
-  height: calc(100% - 8px);
-  background: var(--border);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 /* Transport Comparison */
-.comparison-section {
-  margin-bottom: 2.5rem;
-}
-
-.comparison-section h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  margin-bottom: 0.25rem;
-}
-
 .comparison-table {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+  margin-top: 1.5rem;
 }
 
 .comparison-row {
@@ -625,233 +556,181 @@ body {
   grid-template-columns: 2fr 1.4fr 1fr 1fr;
   gap: 0.75rem;
   align-items: center;
-  padding: 0.9rem 1.25rem;
-  font-size: 0.95rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.comparison-row:last-child {
-  border-bottom: none;
+  padding: 1.1rem 1rem;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .comparison-row.selected {
-  background: var(--bg-selected);
-  box-shadow: inset 3px 0 0 var(--accent);
+  background: var(--bg-soft);
+  box-shadow: inset 4px 0 0 var(--ink);
 }
 
 .comparison-head {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  border-bottom-color: var(--rule);
 }
 
 .comparison-mode {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  font-weight: 600;
+  gap: 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.comparison-tag {
-  padding: 0.1rem 0.5rem;
+.comparison-emoji {
+  filter: grayscale(1);
+}
+
+.comparison-tag,
+.card-badge,
+.transport-badge {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--accent);
-  background: var(--accent-glow);
+  border: 1px solid currentColor;
   border-radius: 999px;
 }
 
 /* Results Actions */
-.results-actions {
+.results-actions,
+.trip-card-actions {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  padding-bottom: 3rem;
 }
 
-.secondary-button {
-  display: inline-block;
-  padding: 1rem 2.5rem;
-  background: transparent;
-  color: var(--accent);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 2px;
-  border: 2px solid var(--accent);
-  border-radius: var(--radius);
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
+/* Empty State */
+.empty-state {
+  border-top: 1px solid var(--rule);
+  padding-top: 2rem;
 }
 
-.secondary-button:hover {
-  background: var(--accent-glow);
+.empty-state p {
+  margin-bottom: 2rem;
 }
 
 /* ============================================
-   TRIP CARD PAGE
+   TRIP CARD
    ============================================ */
 
 .trip-card-page {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.trip-card-page h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.5rem;
-  letter-spacing: 2px;
-  margin-bottom: 0.25rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 2rem;
 }
 
 .trip-card-subtitle {
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
-/* The Card */
 .trip-card {
-  background: linear-gradient(145deg, #2a2318 0%, #1a1612 50%, #2a2318 100%);
-  border: 2px solid var(--accent);
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
+  max-width: 460px;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 2.5rem 2rem 2rem;
   margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow);
-}
-
-.trip-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 .card-header {
   margin-bottom: 2rem;
 }
 
-.card-badge {
-  display: inline-block;
-  padding: 0.3rem 1rem;
-  background: var(--accent);
-  color: var(--bg-dark);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 3px;
-  border-radius: 4px;
-  margin-bottom: 0.75rem;
-}
-
 .card-country {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3rem;
-  letter-spacing: 4px;
-  color: var(--text-primary);
-  line-height: 1;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  margin: 1.25rem 0 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .card-tagline {
-  color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 0.25rem;
+  color: #bdbdbd;
 }
 
 .card-route {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  margin-bottom: 2rem;
+  border-top: 1px solid #4d4d4d;
+  padding: 1.5rem 0;
 }
 
 .card-point {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  color: var(--text-primary);
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.point-dot {
-  font-size: 0.8rem;
+.point-label {
+  width: 3rem;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bdbdbd;
 }
 
 .card-arrow {
-  font-size: 1.2rem;
-  color: var(--text-muted);
+  padding: 0.35rem 0 0.35rem 4rem;
+  color: #8a8a8a;
 }
 
 .card-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-top: 1px solid #4d4d4d;
+  border-bottom: 1px solid #4d4d4d;
+  padding: 1.5rem 0;
 }
 
 .card-stat {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 0.5rem;
 }
 
 .card-stat-value {
-  font-family: 'Bebas Neue', sans-serif;
   font-size: 1.6rem;
-  color: var(--text-primary);
-  letter-spacing: 1px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-.card-stat-label {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.card-stat-label,
+.diff-label {
+  color: #bdbdbd;
 }
 
 .card-transport {
-  margin-bottom: 1.5rem;
+  padding: 1.5rem 0 1rem;
 }
 
+.transport-badge .transport-emoji,
 .transport-badge {
-  display: inline-block;
-  padding: 0.5rem 1.5rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 0.95rem;
-  color: var(--text-primary);
+  filter: grayscale(1);
 }
 
 .card-difficulty {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.diff-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  padding-bottom: 1.5rem;
 }
 
 .diff-bars {
@@ -860,88 +739,91 @@ body {
 }
 
 .diff-bar {
-  width: 20px;
+  width: 22px;
   height: 8px;
-  background: var(--border);
-  border-radius: 2px;
+  background: #4d4d4d;
 }
 
 .diff-bar.filled {
-  background: var(--accent);
+  background: var(--bg);
 }
 
 .diff-text {
-  font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .card-footer {
+  border-top: 1px solid #4d4d4d;
   padding-top: 1rem;
-  border-top: 1px solid var(--border);
 }
 
 .card-brand {
-  font-family: 'Bebas Neue', sans-serif;
   font-size: 1rem;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-}
-
-/* Trip Card Actions */
-.trip-card-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding-bottom: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 
 /* ============================================
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0.75rem 1rem;
-  }
-
-  .brand-text {
-    font-size: 1.4rem;
-  }
-
-  .hero {
-    padding: 2rem 1rem;
-  }
-
-  .hero-title {
-    letter-spacing: 4px;
-  }
-
-  .planner {
-    padding: 1.5rem 1rem;
-  }
-
-  .country-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .transport-grid {
+@media (max-width: 900px) {
+  .hero-features,
+  .transport-grid,
+  .country-grid,
+  .results-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .results {
-    padding: 1.5rem 1rem;
+  .hero-features {
+    row-gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-pad: 1.25rem;
   }
 
-  .results-grid {
+  .navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .hero-intro {
     grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+  }
+
+  .hero-intro .cta-button {
+    justify-self: stretch;
+  }
+
+  .feature-number {
+    margin-bottom: 1rem;
+  }
+
+  .planner-section h2,
+  .checkpoints-section h2,
+  .comparison-section h2 {
+    font-size: 1.75rem;
+  }
+
+  .checkpoint {
+    gap: 1rem;
+  }
+
+  .checkpoint-name {
+    font-size: 1.2rem;
   }
 
   .comparison-row {
     grid-template-columns: 1fr 1fr 1fr;
-    padding: 0.9rem 1rem;
-    font-size: 0.85rem;
+    padding: 1rem 0.75rem;
+    font-size: 0.9rem;
   }
 
   .comparison-head {
@@ -952,21 +834,15 @@ body {
     grid-column: 1 / -1;
   }
 
-  .card-stats {
-    gap: 0.5rem;
-  }
-
-  .card-stat-value {
-    font-size: 1.3rem;
-  }
-
-  .trip-card {
-    padding: 2rem 1.25rem;
-  }
-
   .results-actions,
   .trip-card-actions {
     flex-direction: column;
-    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-features,
+  .results-grid {
+    grid-template-columns: 1fr;
   }
 }
