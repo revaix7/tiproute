@@ -4,10 +4,12 @@ import Planner from './pages/Planner'
 import Results from './pages/Results'
 import TripCard from './pages/TripCard'
 import Navbar from './components/Navbar'
+import ScrollToTop from './components/ScrollToTop'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
