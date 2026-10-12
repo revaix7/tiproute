@@ -10,6 +10,7 @@ A trip planner for tip-to-tip journeys: crossing a country from one end to the o
 - **12 countries**, each with a real start and end point, an approximate road distance, and checkpoints along the way.
 - **4 ways to travel:** motorbike, bicycle, public transit and walking. Each has its own daily distance range and costs.
 - **Budget and difficulty.** Combines transport costs with your daily spending budget, and rates difficulty from Easy to Extreme based on the transport mode, distance and trip length.
+- **Transport comparison.** The results page lines up all four ways to travel for the same route and budget, and tags the cheapest and the fastest (or, with a fixed number of days, the one that gets farthest).
 - **Trip card.** A summary card of the planned trip.
 
 ## How the estimates work
