@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { countries, transportModes } from '../data/countries'
-import { calculateTrip } from '../data/tripCalculator'
+import { calculateTrip, compareTransportModes } from '../data/tripCalculator'
 
 export default function Planner() {
   const navigate = useNavigate()
@@ -22,7 +22,15 @@ export default function Planner() {
       tripDays,
     })
 
-    navigate('/results', { state: { trip: result } })
+    const comparison = compareTransportModes({
+      country: selectedCountry,
+      transportModes,
+      dailyBudget,
+      planningMode,
+      tripDays,
+    })
+
+    navigate('/results', { state: { trip: result, comparison } })
   }
 
   return (
