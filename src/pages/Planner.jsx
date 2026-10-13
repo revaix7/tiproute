@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { countries, transportModes } from '../data/countries'
 import { calculateTrip, compareTransportModes } from '../data/tripCalculator'
@@ -9,13 +9,48 @@ const MAX_TRIP_DAYS = Math.ceil(
     Math.min(...transportModes.map((t) => t.kmPerDay.min))
 )
 
+const STORAGE_KEY = 'tiproute.planner'
+
+// Choices from the last visit in this tab, so coming back doesn't reset the planner
+function loadSavedChoices() {
+  try {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) ?? {}
+  } catch {
+    return {}
+  }
+}
+
+const inRange = (value, min, max) => Number.isInteger(value) && value >= min && value <= max
+
 export default function Planner() {
   const navigate = useNavigate()
-  const [planningMode, setPlanningMode] = useState('route') // 'route' or 'time'
-  const [selectedCountry, setSelectedCountry] = useState(null)
-  const [selectedTransport, setSelectedTransport] = useState(transportModes[0])
-  const [dailyBudget, setDailyBudget] = useState(30)
-  const [tripDays, setTripDays] = useState(14)
+  const [saved] = useState(loadSavedChoices)
+  const [planningMode, setPlanningMode] = useState(saved.planningMode === 'time' ? 'time' : 'route') // 'route' or 'time'
+  const [selectedCountry, setSelectedCountry] = useState(
+    countries.find((c) => c.code === saved.countryCode) ?? null
+  )
+  const [selectedTransport, setSelectedTransport] = useState(
+    transportModes.find((t) => t.id === saved.transportId) ?? transportModes[0]
+  )
+  const [dailyBudget, setDailyBudget] = useState(inRange(saved.dailyBudget, 5, 150) ? saved.dailyBudget : 30)
+  const [tripDays, setTripDays] = useState(inRange(saved.tripDays, 1, MAX_TRIP_DAYS) ? saved.tripDays : 14)
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          planningMode,
+          countryCode: selectedCountry?.code ?? null,
+          transportId: selectedTransport.id,
+          dailyBudget,
+          tripDays,
+        })
+      )
+    } catch {
+      // Storage unavailable: the planner still works, it just won't remember
+    }
+  }, [planningMode, selectedCountry, selectedTransport, dailyBudget, tripDays])
 
   const handlePlan = () => {
     if (!selectedCountry) return
