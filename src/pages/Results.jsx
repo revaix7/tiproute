@@ -95,7 +95,7 @@ export default function Results() {
         <div className="completion-warning">
           <p>
             With {trip.avgDays} days by {trip.transport.name.toLowerCase()}, you'd cover ~
-            {trip.reachableDistance.toLocaleString()} km and reach <strong>{trip.reachableCheckpoint}</strong>.
+            {trip.reachableDistance.toLocaleString()} km and reach <strong>{trip.reachableCheckpoint.name}</strong>.
             That's {Math.round((trip.reachableDistance / trip.distance) * 100)}% of the full route.
           </p>
         </div>
@@ -115,9 +115,9 @@ export default function Results() {
         <h2>Route Checkpoints</h2>
         <div className="checkpoint-list">
           {trip.checkpoints.map((cp, i) => (
-            <div key={cp} className="checkpoint">
+            <div key={cp.name} className="checkpoint">
               <span className="checkpoint-marker">{String(i + 1).padStart(2, '0')}</span>
-              <span className="checkpoint-name">{cp}</span>
+              <span className="checkpoint-name">{cp.name}</span>
             </div>
           ))}
         </div>

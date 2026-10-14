@@ -30,7 +30,7 @@ export default function TripCard() {
   }
 
   // An unfinished "I have time" trip ends at the last checkpoint reached
-  const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint
+  const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint.name
   const distance = trip.canComplete ? trip.distance : trip.reachableDistance
   const days = trip.minDays === trip.maxDays ? `${trip.minDays}` : `${trip.minDays}-${trip.maxDays}`
 
