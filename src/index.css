@@ -138,6 +138,8 @@ h3 {
    ============================================ */
 
 .home,
+.choose-trip,
+.custom-trip,
 .planner,
 .results,
 .trip-card-page {
@@ -214,6 +216,52 @@ h3 {
 .feature-card p {
   color: var(--ink-soft);
   font-size: 0.95rem;
+}
+
+/* ============================================
+   CHOOSE TRIP
+   ============================================ */
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+/* Same look as the country cards, just bigger */
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem 1.75rem;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--rule-soft);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.choice-card:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.choice-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.choice-text {
+  font-size: 1rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.choice-card:hover .choice-text {
+  color: #bdbdbd;
 }
 
 /* ============================================
@@ -842,6 +890,7 @@ h3 {
 
 @media (max-width: 480px) {
   .hero-features,
+  .choice-grid,
   .results-grid {
     grid-template-columns: 1fr;
   }

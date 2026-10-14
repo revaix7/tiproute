@@ -30,7 +30,7 @@ export default function Home() {
             The trip planner for people who want adventure over comfort.
             Pick your mode, your budget, your challenge — then figure out the rest yourself.
           </p>
-          <Link to="/planner" className="cta-button">
+          <Link to="/start" className="cta-button">
             Plan Your Tip to Tip
           </Link>
         </div>
