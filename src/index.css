@@ -814,6 +814,40 @@ h3 {
 }
 
 /* ============================================
+   ROUTE MAP
+   ============================================ */
+
+.route-map {
+  height: 420px;
+  width: 100%;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--bg-soft);
+  font-family: inherit;
+}
+
+.route-map .leaflet-tile-pane {
+  filter: grayscale(1);
+}
+
+.route-map .leaflet-control-zoom a {
+  border-radius: 0;
+  color: var(--ink);
+}
+
+.route-map .leaflet-bar {
+  border: 1px solid var(--ink);
+  border-radius: 0;
+}
+
+.route-map .leaflet-tooltip {
+  border-radius: 0;
+  border: 1px solid var(--ink);
+  box-shadow: none;
+  font-weight: 600;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 
