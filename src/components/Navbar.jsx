@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 export default function Navbar() {
   const location = useLocation()
+  const planning = ['/start', '/planner', '/custom'].includes(location.pathname)
 
   return (
     <nav className="navbar">
@@ -10,7 +11,7 @@ export default function Navbar() {
       </Link>
       <div className="navbar-links">
         <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
-        <Link to="/planner" className={location.pathname === '/planner' ? 'active' : ''}>Planner</Link>
+        <Link to="/start" className={planning ? 'active' : ''}>Planner</Link>
       </div>
     </nav>
   )
