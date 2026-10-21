@@ -331,6 +331,7 @@ h3 {
 }
 
 .planner-section h2,
+.map-section h2,
 .checkpoints-section h2,
 .comparison-section h2 {
   font-size: 2.25rem;
@@ -557,13 +558,15 @@ h3 {
   color: var(--bg);
 }
 
-/* Checkpoints */
+/* Map, checkpoints and comparison */
+.map-section,
 .checkpoints-section,
 .comparison-section {
   border-top: 1px solid var(--rule);
   padding: 2rem 0 3.5rem;
 }
 
+.map-section .route-map,
 .checkpoint-list {
   margin-top: 1.5rem;
 }
@@ -889,9 +892,14 @@ h3 {
   }
 
   .planner-section h2,
+  .map-section h2,
   .checkpoints-section h2,
   .comparison-section h2 {
     font-size: 1.75rem;
+  }
+
+  .route-map {
+    height: 300px;
   }
 
   .checkpoint {
