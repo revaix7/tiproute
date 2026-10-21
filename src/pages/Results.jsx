@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
-import { startEndPoints } from '../data/geo'
+import ComparisonTable from '../components/ComparisonTable'
+import { DIFFICULTY_COLORS } from '../components/difficultyColors'
+import { tripMapPoints } from '../data/geo'
+import { routeProgress } from '../data/tripCalculator'
+import { getRouteLines } from '../data/routes'
+import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
 
 export default function Results() {
   const location = useLocation()
@@ -10,14 +15,23 @@ export default function Results() {
   const comparison = location.state?.comparison
 
   // Kept stable between renders so the map does not zoom back on every render.
-  // Always the full route, even for an unfinished "I have time" trip (#11 shows how far it gets).
+  // Always the full route; an unfinished "I have time" trip also marks where it stops.
   const start = trip?.start
   const end = trip?.end
-  const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
-  // One straight line for now. Step 09 (#22) replaces it with many route lines.
+  const mapPoints = useMemo(() => tripMapPoints(trip), [trip])
+  // Many ways to get there, passing near the whole route's checkpoints
+  const routeCheckpoints = trip?.allCheckpoints ?? trip?.checkpoints
   const mapLines = useMemo(
-    () => (start && end ? [[[start.lat, start.lng], [end.lat, end.lng]]] : []),
-    [start, end]
+    () =>
+      start && end
+        ? getRouteLines({
+            from: start,
+            to: end,
+            via: (routeCheckpoints ?? []).slice(1, -1),
+            count: ROUTE_LINE_COUNT,
+          })
+        : [],
+    [start, end, routeCheckpoints]
   )
 
   if (!trip) {
@@ -30,16 +44,11 @@ export default function Results() {
     )
   }
 
-  const difficultyColor = {
-    Easy: '#15803d',
-    Moderate: '#a16207',
-    Challenging: '#c2410c',
-    Hard: '#b91c1c',
-    Extreme: '#7f1d1d',
-  }
-
   // Only "I have time" trips have a fixed day count
   const isTimeMode = trip.minDays === trip.maxDays
+  // Every checkpoint on the route; the ones after the last one reached are greyed out
+  const allCheckpoints = trip.allCheckpoints ?? trip.checkpoints
+  const reachedCount = trip.checkpoints.length
 
   return (
     <div className="results">
@@ -95,7 +104,7 @@ export default function Results() {
           <div className="stat-info">
             <span
               className="stat-value"
-              style={{ color: difficultyColor[trip.difficulty.label] }}
+              style={{ color: DIFFICULTY_COLORS[trip.difficulty.label] }}
             >
               {trip.difficulty.label} ({trip.difficulty.score}/5)
             </span>
@@ -110,7 +119,7 @@ export default function Results() {
           <p>
             With {trip.avgDays} days by {trip.transport.name.toLowerCase()}, you'd cover ~
             {trip.reachableDistance.toLocaleString()} km and reach <strong>{trip.reachableCheckpoint.name}</strong>.
-            That's {Math.round((trip.reachableDistance / trip.distance) * 100)}% of the full route.
+            That's {routeProgress(trip).percent}% of the full route.
           </p>
         </div>
       )}
@@ -128,7 +137,7 @@ export default function Results() {
       {mapPoints.length > 0 && (
         <div className="map-section">
           <h2>Route Map</h2>
-          <RouteMap points={mapPoints} lines={mapLines} showLabels />
+          <RouteMap points={mapPoints} lines={mapLines} lineStyle={ROUTE_LINE_STYLE} showLabels />
         </div>
       )}
 
@@ -136,10 +145,14 @@ export default function Results() {
       <div className="checkpoints-section">
         <h2>Route Checkpoints</h2>
         <div className="checkpoint-list">
-          {trip.checkpoints.map((cp, i) => (
-            <div key={cp.name} className="checkpoint">
+          {allCheckpoints.map((cp, i) => (
+            <div key={cp.name} className={`checkpoint ${i < reachedCount ? '' : 'not-reached'}`}>
               <span className="checkpoint-marker">{String(i + 1).padStart(2, '0')}</span>
               <span className="checkpoint-name">{cp.name}</span>
+              {!trip.canComplete && i === reachedCount - 1 && (
+                <span className="checkpoint-tag">You reach here</span>
+              )}
+              {i >= reachedCount && <span className="checkpoint-tag">Not reached</span>}
             </div>
           ))}
         </div>
@@ -150,37 +163,11 @@ export default function Results() {
         <div className="comparison-section">
           <h2>Compare Your Options</h2>
           <p className="section-note">Same route and daily budget, every way to travel</p>
-          <div className="comparison-table">
-            <div className="comparison-row comparison-head">
-              <span>Transport</span>
-              <span>{isTimeMode ? 'Distance' : 'Time'}</span>
-              <span>Budget</span>
-              <span>Difficulty</span>
-            </div>
-            {comparison.map((option) => (
-              <div
-                key={option.id}
-                className={`comparison-row ${option.id === trip.transport.id ? 'selected' : ''}`}
-              >
-                <span className="comparison-mode">
-                  <span className="comparison-emoji">{option.emoji}</span> {option.name}
-                  {option.isCheapest && <span className="comparison-tag">Cheapest</span>}
-                  {option.isFastest && (
-                    <span className="comparison-tag">{isTimeMode ? 'Farthest' : 'Fastest'}</span>
-                  )}
-                </span>
-                <span>
-                  {isTimeMode
-                    ? `${option.reachableDistance.toLocaleString()} km (${option.percentOfRoute}%)`
-                    : `${option.minDays}–${option.maxDays} days`}
-                </span>
-                <span>${option.totalBudget.toLocaleString()}</span>
-                <span style={{ color: difficultyColor[option.difficulty.label] }}>
-                  {option.difficulty.label}
-                </span>
-              </div>
-            ))}
-          </div>
+          <ComparisonTable
+            options={comparison}
+            selectedId={trip.transport.id}
+            isTimeMode={isTimeMode}
+          />
         </div>
       )}
 

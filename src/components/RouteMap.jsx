@@ -3,6 +3,9 @@ import { MapContainer, TileLayer, CircleMarker, Polyline, Tooltip, useMap, useMa
 
 const WORLD_CENTER = [20, 0]
 const DEFAULT_FIT_PADDING = 30
+const DEFAULT_LINE_STYLE = { color: '#000', weight: 2, opacity: 0.8 }
+const POINT_STYLE = { color: '#fff', weight: 2, fillColor: '#000', fillOpacity: 1 }
+const HOLLOW_POINT_STYLE = { color: '#000', weight: 3, fillColor: '#fff', fillOpacity: 1 }
 
 function contentCoords(points, lines) {
   return [...points.map((p) => [p.lat, p.lng]), ...lines.flat()]
@@ -32,11 +35,13 @@ function ClickHandler({ onMapClick }) {
   return null
 }
 
-// One map for every page: points are { lat, lng, label }, lines are lists of [lat, lng].
+// One map for every page: points are { lat, lng, label, hollow }, lines are lists of [lat, lng].
+// A hollow point is white with a black ring (where an unfinished trip stops).
 // With interactive false the map cannot be dragged or zoomed (for the trip card).
 // With showLabels the point labels are always visible instead of only on hover.
 // With fitToContent false the map keeps its view when points change (for picking points).
 // fitPadding is the space in pixels kept around the content (smaller for small maps).
+// lineStyle is passed to Leaflet for every line (thin and see-through for many lines).
 export default function RouteMap({
   points = [],
   lines = [],
@@ -45,6 +50,7 @@ export default function RouteMap({
   showLabels = false,
   fitToContent = true,
   fitPadding = DEFAULT_FIT_PADDING,
+  lineStyle = DEFAULT_LINE_STYLE,
   className = '',
 }) {
   const fitOptions = useMemo(() => ({ padding: [fitPadding, fitPadding] }), [fitPadding])
@@ -77,14 +83,14 @@ export default function RouteMap({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {lines.map((line, i) => (
-        <Polyline key={i} positions={line} pathOptions={{ color: '#000', weight: 2, opacity: 0.8 }} />
+        <Polyline key={i} positions={line} pathOptions={lineStyle} />
       ))}
       {points.map((p, i) => (
         <CircleMarker
           key={`${p.lat},${p.lng},${i}`}
           center={[p.lat, p.lng]}
           radius={7}
-          pathOptions={{ color: '#fff', weight: 2, fillColor: '#000', fillOpacity: 1 }}
+          pathOptions={p.hollow ? HOLLOW_POINT_STYLE : POINT_STYLE}
         >
           {p.label && (
             <Tooltip direction="top" offset={[0, -6]} permanent={showLabels}>

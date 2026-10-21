@@ -96,6 +96,20 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
   }
 }
 
+// How much of the route a trip covers: all of it, or part of it for an unfinished
+// "I have time" trip
+export function routeProgress(trip) {
+  const totalKm = trip.distance
+  const coveredKm = trip.canComplete ? totalKm : trip.reachableDistance
+  return { coveredKm, totalKm, percent: Math.round((coveredKm / totalKm) * 100) }
+}
+
+// "385 of 2,100 km (18%)", for the trip card and the share text
+export function progressText(trip) {
+  const { coveredKm, totalKm, percent } = routeProgress(trip)
+  return `${coveredKm.toLocaleString()} of ${totalKm.toLocaleString()} km (${percent}%)`
+}
+
 // From easiest to hardest. A score of 1 is Easy, 5 is Extreme.
 export const DIFFICULTY_LABELS = ['Easy', 'Moderate', 'Challenging', 'Hard', 'Extreme']
 
@@ -139,5 +153,28 @@ export function compareTransportModes({ country, transportModes, dailyBudget, pl
     isCheapest: t.totalBudget === cheapest,
     // With a fixed number of days every mode takes the same time, so rank by distance instead
     isFastest: planningMode === 'route' ? t.avgDays === fastest : t.reachableDistance === farthest,
+  }))
+}
+
+// The same distance with every transport mode, for a trip with no country ("plan your own trip")
+export function compareEstimates({ distanceKm, transportModes, dailyBudget }) {
+  const estimates = transportModes.map((transportMode) => ({
+    transportMode,
+    ...estimateTrip({ distanceKm, transportMode, dailyBudget }),
+  }))
+
+  const cheapest = Math.min(...estimates.map((e) => e.totalBudget))
+  const fastest = Math.min(...estimates.map((e) => e.avgDays))
+
+  return estimates.map((e) => ({
+    id: e.transportMode.id,
+    name: e.transportMode.name,
+    emoji: e.transportMode.emoji,
+    minDays: e.minDays,
+    maxDays: e.maxDays,
+    totalBudget: e.totalBudget,
+    difficulty: e.difficulty,
+    isCheapest: e.totalBudget === cheapest,
+    isFastest: e.avgDays === fastest,
   }))
 }

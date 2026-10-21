@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { countries, transportModes } from '../data/countries'
 import { calculateTrip, compareTransportModes } from '../data/tripCalculator'
+import TransportPicker from '../components/TransportPicker'
+import BudgetSlider from '../components/BudgetSlider'
 
 // Long enough to walk the longest route at the slowest pace
 const MAX_TRIP_DAYS = Math.ceil(
@@ -121,41 +123,14 @@ export default function Planner() {
         {/* Transport Mode */}
         <div className="planner-section">
           <h2>Choose Your Ride</h2>
-          <div className="transport-grid">
-            {transportModes.map((t) => (
-              <button
-                key={t.id}
-                className={`transport-card ${selectedTransport.id === t.id ? 'selected' : ''}`}
-                onClick={() => setSelectedTransport(t)}
-              >
-                <span className="transport-emoji">{t.emoji}</span>
-                <span className="transport-name">{t.name}</span>
-                <span className="transport-desc">{t.description}</span>
-              </button>
-            ))}
-          </div>
+          <TransportPicker selected={selectedTransport} onSelect={setSelectedTransport} />
         </div>
 
         {/* Budget Slider */}
         <div className="planner-section">
           <h2>Daily Budget (Living Costs)</h2>
           <p className="section-note">Food, accommodation, misc — not transport</p>
-          <div className="slider-container">
-            <input
-              type="range"
-              min="5"
-              max="150"
-              step="5"
-              value={dailyBudget}
-              onChange={(e) => setDailyBudget(Number(e.target.value))}
-              className="budget-slider"
-            />
-            <div className="slider-value">${dailyBudget}/day</div>
-            <div className="slider-labels">
-              <span>Survival ($5)</span>
-              <span>Comfortable ($150)</span>
-            </div>
-          </div>
+          <BudgetSlider value={dailyBudget} onChange={setDailyBudget} />
         </div>
 
         {/* Trip Length (only in "I have time" mode) */}

@@ -1,17 +1,16 @@
 import { useLocation, Link } from 'react-router-dom'
 import { useMemo, useRef } from 'react'
 import RouteMap from '../components/RouteMap'
-import { startEndPoints } from '../data/geo'
+import { tripMapPoints } from '../data/geo'
+import { progressText } from '../data/tripCalculator'
 
 export default function TripCard() {
   const location = useLocation()
   const trip = location.state?.trip
   const cardRef = useRef(null)
 
-  // Same points as the results page, but an unfinished trip ends at the last checkpoint reached
-  const start = trip?.start
-  const end = trip && !trip.canComplete ? trip.reachableCheckpoint : trip?.end
-  const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
+  // Same points as the results page: the whole route, plus where an unfinished trip stops
+  const mapPoints = useMemo(() => tripMapPoints(trip), [trip])
 
   if (!trip) {
     return (
@@ -40,9 +39,19 @@ export default function TripCard() {
   const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint.name
   const distance = trip.canComplete ? trip.distance : trip.reachableDistance
   const days = trip.minDays === trip.maxDays ? `${trip.minDays}` : `${trip.minDays}-${trip.maxDays}`
+  // A "plan your own trip" card has no country
+  const title = trip.country ?? 'Your Route'
+  const unfinished = !trip.canComplete
+  const tagline = !trip.country
+    ? 'Your own start and end'
+    : unfinished
+      ? 'Part of the Tip-to-Tip'
+      : 'Tip-to-Tip'
+  const planAnotherPath = trip.country ? '/planner' : '/custom'
 
   const handleShare = async () => {
-    const text = `TIPROUTE Challenge\n${trip.country}: ${trip.startPoint} \u2192 ${endPoint}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
+    const progress = unfinished ? `\nGets ${progressText(trip)} of the way to ${trip.endPoint}` : ''
+    const text = `TIPROUTE Challenge\n${trip.country ?? 'My own route'}: ${trip.startPoint} \u2192 ${endPoint}${progress}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
 
     if (navigator.share) {
       try {
@@ -68,8 +77,8 @@ export default function TripCard() {
       <div className="trip-card" ref={cardRef}>
         <div className="card-header">
           <span className="card-badge">CHALLENGE</span>
-          <h2 className="card-country">{trip.country}</h2>
-          <p className="card-tagline">Tip-to-Tip</p>
+          <h2 className="card-country">{title}</h2>
+          <p className="card-tagline">{tagline}</p>
         </div>
 
         <div className="card-route">
@@ -84,7 +93,9 @@ export default function TripCard() {
           </div>
         </div>
 
-        {/* Only the two points, no route lines, and it cannot be dragged or zoomed */}
+        {unfinished && <p className="card-progress">{progressText(trip)} of the route</p>}
+
+        {/* Only the points, no route lines, and it cannot be dragged or zoomed */}
         {mapPoints.length > 0 && (
           <RouteMap points={mapPoints} interactive={false} fitPadding={12} className="card-map" />
         )}
@@ -125,7 +136,7 @@ export default function TripCard() {
         <button className="cta-button" onClick={handleShare}>
           Share Trip Card
         </button>
-        <Link to="/planner" className="secondary-button">Plan Another</Link>
+        <Link to={planAnotherPath} className="secondary-button">Plan Another</Link>
       </div>
     </div>
   )

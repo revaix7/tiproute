@@ -20,3 +20,22 @@ export function startEndPoints(start, end) {
     { ...end, label: `End: ${end.name}` },
   ]
 }
+
+// The start and end of a trip's whole route. An unfinished "I have time" trip also gets
+// a hollow point where the time runs out, so the real end is never mistaken for the finish.
+export function tripMapPoints(trip) {
+  const points = startEndPoints(trip?.start, trip?.end)
+  const reached = trip?.reachableCheckpoint
+  if (points.length === 0 || trip.canComplete || !reached || reached.name === trip.start.name) {
+    return points
+  }
+  return [...points, { ...reached, label: `You reach: ${reached.name}`, hollow: true }]
+}
+
+// Roads are longer than a straight line
+export const ROAD_FACTOR = 1.3
+
+// Estimated road distance in km between two { lat, lng } points
+export function roadDistanceBetween(a, b) {
+  return distanceBetween(a, b) * ROAD_FACTOR
+}
