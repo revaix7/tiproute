@@ -43,8 +43,7 @@ export default function RouteMap({
   showLabels = false,
   className = '',
 }) {
-  // The first view is also set when the map is created. In dev, StrictMode removes and
-  // re-adds the map, and a fitBounds from FitToContent alone is lost.
+  // Open on the content so the map does not start on the whole world and then zoom in
   const coords = contentCoords(points, lines)
   const initialView =
     coords.length > 1
@@ -58,7 +57,9 @@ export default function RouteMap({
       className={`route-map ${className}`}
       {...initialView}
       dragging={interactive}
-      scrollWheelZoom={interactive}
+      // The mouse wheel scrolls the page, not the map, so the map never traps the scroll.
+      // Use the buttons, a double click or a pinch to zoom.
+      scrollWheelZoom={false}
       doubleClickZoom={interactive}
       touchZoom={interactive}
       boxZoom={interactive}
