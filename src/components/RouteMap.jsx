@@ -45,6 +45,7 @@ function ClickHandler({ onMapClick }) {
 // With fitToContent false the map keeps its view when points change (for picking points).
 // fitPadding is the space in pixels kept around the content (smaller for small maps).
 // lineStyle is passed to Leaflet for every line (thin and see-through for many lines).
+// credit is extra HTML for the attribution in the corner, like the routing service.
 export default function RouteMap({
   points = [],
   lines = [],
@@ -54,6 +55,7 @@ export default function RouteMap({
   fitToContent = true,
   fitPadding = DEFAULT_FIT_PADDING,
   lineStyle = DEFAULT_LINE_STYLE,
+  credit,
   className = '',
 }) {
   const fitOptions = useMemo(() => ({ padding: [fitPadding, fitPadding] }), [fitPadding])
@@ -85,7 +87,7 @@ export default function RouteMap({
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution={`&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors${credit ? ` | ${credit}` : ''}`}
       />
       {lines.map((line, i) => (
         <Polyline key={i} positions={line} pathOptions={lineStyle} />

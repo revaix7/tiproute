@@ -8,8 +8,9 @@ import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { transportModes } from '../data/countries'
 import { distanceBetween, formatPoint, roadDistanceBetween } from '../data/geo'
 import { estimateTrip, compareEstimates } from '../data/tripCalculator'
-import { getRouteLines } from '../data/routes'
-import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
+import { ROUTE_CREDIT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
+import { useRoadRoutes } from '../components/useRoadRoutes'
+import RouteStatus from '../components/RouteStatus'
 import { tripSearch, COORD_DECIMALS, MIN_DISTANCE_KM } from '../data/tripLink'
 // Further than this, the trip probably crosses a sea, which the estimate does not know about
 const LONG_TRIP_KM = 5000
@@ -83,14 +84,13 @@ export default function CustomPlanner() {
     ],
     [start, end]
   )
-  // Many ways to get there once both points are set (generated lines, see #20)
-  const lines = useMemo(
-    () =>
-      start && end && !tooClose
-        ? getRouteLines({ from: start, to: end, count: ROUTE_LINE_COUNT })
-        : [],
-    [start, end, tooClose]
-  )
+  // Real routes by road once both points are set, for the chosen way to travel (#50)
+  const roads = useRoadRoutes({
+    from: start,
+    to: end && !tooClose ? end : null,
+    transportId: transportMode.id,
+  })
+  const lines = useMemo(() => roads.routes.map((r) => r.line), [roads.routes])
 
   // The trip card works the trip out again from the link, so the link can be shared
   const openTripCard = () => {
@@ -124,11 +124,14 @@ export default function CustomPlanner() {
           points={points}
           lines={lines}
           lineStyle={ROUTE_LINE_STYLE}
+          credit={ROUTE_CREDIT}
           onMapClick={handleMapClick}
           showLabels
           fitToContent={false}
           className="route-map-large"
         />
+
+        <RouteStatus status={roads.status} routes={roads.routes} onRetry={roads.retry} />
 
         <div className="picked-points">
           <div className="picked-point">

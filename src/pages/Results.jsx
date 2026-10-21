@@ -6,8 +6,9 @@ import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { tripMapPoints } from '../data/geo'
 import { routeProgress } from '../data/tripCalculator'
 import { tripFromSearch } from '../data/tripLink'
-import { getRouteLines } from '../data/routes'
-import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
+import { ROUTE_CREDIT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
+import { useRoadRoutes } from '../components/useRoadRoutes'
+import RouteStatus from '../components/RouteStatus'
 
 export default function Results() {
   const location = useLocation()
@@ -22,20 +23,20 @@ export default function Results() {
   const start = trip?.start
   const end = trip?.end
   const mapPoints = useMemo(() => tripMapPoints(trip), [trip])
-  // Many ways to get there, passing near the whole route's checkpoints
+  // Real routes by road for this way to travel, one of them through the whole route's
+  // checkpoints (#50)
   const routeCheckpoints = trip?.allCheckpoints ?? trip?.checkpoints
-  const mapLines = useMemo(
-    () =>
-      start && end
-        ? getRouteLines({
-            from: start,
-            to: end,
-            via: (routeCheckpoints ?? []).slice(1, -1),
-            count: ROUTE_LINE_COUNT,
-          })
-        : [],
-    [start, end, routeCheckpoints]
+  const via = useMemo(
+    () => (routeCheckpoints ?? []).slice(1, -1).map(({ lat, lng }) => ({ lat, lng })),
+    [routeCheckpoints]
   )
+  const roads = useRoadRoutes({
+    from: trip?.planningMode === 'custom' ? null : start,
+    to: end,
+    via,
+    transportId: trip?.transport.id,
+  })
+  const mapLines = useMemo(() => roads.routes.map((r) => r.line), [roads.routes])
 
   // A "plan your own trip" link has no country route to show here, only a trip card
   if (trip?.planningMode === 'custom') {
@@ -181,7 +182,14 @@ export default function Results() {
       {mapPoints.length > 0 && (
         <div className="map-section">
           <h2>Route Map</h2>
-          <RouteMap points={mapPoints} lines={mapLines} lineStyle={ROUTE_LINE_STYLE} showLabels />
+          <RouteMap
+            points={mapPoints}
+            lines={mapLines}
+            lineStyle={ROUTE_LINE_STYLE}
+            credit={ROUTE_CREDIT}
+            showLabels
+          />
+          <RouteStatus status={roads.status} routes={roads.routes} onRetry={roads.retry} />
         </div>
       )}
 

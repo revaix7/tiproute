@@ -15,7 +15,7 @@ A trip planner for tip-to-tip journeys: crossing a country from one end to the o
 - **4 ways to travel:** motorbike, bicycle, public transit and walking. Each has its own daily distance range and costs.
 - **Budget and difficulty.** Combines transport costs with your daily spending budget, and rates difficulty from Easy to Extreme based on the transport mode, distance and trip length.
 - **Transport comparison.** The results page lines up all four ways to travel for the same route and budget, and tags the cheapest and the fastest (or, with a fixed number of days, the one that gets farthest).
-- **Maps.** The results page draws the start, the end and 40 possible route lines.
+- **Maps with real routes.** The results page and "plan your own trip" draw routes by road for your way to travel (car, bike or foot), from the free [FOSSGIS OSRM](https://routing.openstreetmap.de/about.html) servers on OpenStreetMap data.
 - **Trip card and share links.** A summary card of the planned trip. The trip is in the URL, so the share text links to the same trip.
 
 ## How the estimates work
