@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
+import { startEndPoints } from '../data/geo'
 
 export default function Results() {
   const location = useLocation()
@@ -12,16 +13,7 @@ export default function Results() {
   // Always the full route, even for an unfinished "I have time" trip (#11 shows how far it gets).
   const start = trip?.start
   const end = trip?.end
-  const mapPoints = useMemo(
-    () =>
-      start && end
-        ? [
-            { ...start, label: `Start: ${start.name}` },
-            { ...end, label: `End: ${end.name}` },
-          ]
-        : [],
-    [start, end]
-  )
+  const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
   // One straight line for now. Step 09 (#22) replaces it with many route lines.
   const mapLines = useMemo(
     () => (start && end ? [[[start.lat, start.lng], [end.lat, end.lng]]] : []),

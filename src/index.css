@@ -747,6 +747,18 @@ h3 {
   color: #8a8a8a;
 }
 
+.route-map.card-map {
+  height: 180px;
+  border: 0;
+  margin-bottom: 1.5rem;
+  pointer-events: none;
+}
+
+.route-map.card-map .leaflet-control-attribution {
+  pointer-events: auto;
+  font-size: 0.6rem;
+}
+
 .card-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
