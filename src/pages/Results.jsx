@@ -2,6 +2,11 @@ import { useMemo } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
 import { startEndPoints } from '../data/geo'
+import { getRouteLines } from '../data/routes'
+
+const ROUTE_LINE_COUNT = 40
+// Thin and see-through, so the route looks darker where many lines overlap
+const ROUTE_LINE_STYLE = { color: '#000', weight: 1, opacity: 0.25 }
 
 export default function Results() {
   const location = useLocation()
@@ -14,10 +19,19 @@ export default function Results() {
   const start = trip?.start
   const end = trip?.end
   const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
-  // One straight line for now. Step 09 (#22) replaces it with many route lines.
+  // Many ways to get there, passing near the whole route's checkpoints
+  const routeCheckpoints = trip?.allCheckpoints ?? trip?.checkpoints
   const mapLines = useMemo(
-    () => (start && end ? [[[start.lat, start.lng], [end.lat, end.lng]]] : []),
-    [start, end]
+    () =>
+      start && end
+        ? getRouteLines({
+            from: start,
+            to: end,
+            via: (routeCheckpoints ?? []).slice(1, -1),
+            count: ROUTE_LINE_COUNT,
+          })
+        : [],
+    [start, end, routeCheckpoints]
   )
 
   if (!trip) {
@@ -128,7 +142,7 @@ export default function Results() {
       {mapPoints.length > 0 && (
         <div className="map-section">
           <h2>Route Map</h2>
-          <RouteMap points={mapPoints} lines={mapLines} showLabels />
+          <RouteMap points={mapPoints} lines={mapLines} lineStyle={ROUTE_LINE_STYLE} showLabels />
         </div>
       )}
 
