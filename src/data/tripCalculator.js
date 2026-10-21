@@ -19,6 +19,8 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
     return {
       startPoint: country.tipToTip.start.name,
       endPoint: country.tipToTip.end.name,
+      start: country.tipToTip.start,
+      end: country.tipToTip.end,
       country: country.name,
       distance,
       minDays,
@@ -63,6 +65,8 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
     return {
       startPoint: country.tipToTip.start.name,
       endPoint: country.tipToTip.end.name,
+      start: country.tipToTip.start,
+      end: country.tipToTip.end,
       country: country.name,
       distance,
       minDays: tripDays,

@@ -1,10 +1,32 @@
+import { useMemo } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
+import RouteMap from '../components/RouteMap'
 
 export default function Results() {
   const location = useLocation()
   const navigate = useNavigate()
   const trip = location.state?.trip
   const comparison = location.state?.comparison
+
+  // Kept stable between renders so the map does not zoom back on every render.
+  // Always the full route, even for an unfinished "I have time" trip (#11 shows how far it gets).
+  const start = trip?.start
+  const end = trip?.end
+  const mapPoints = useMemo(
+    () =>
+      start && end
+        ? [
+            { ...start, label: `Start: ${start.name}` },
+            { ...end, label: `End: ${end.name}` },
+          ]
+        : [],
+    [start, end]
+  )
+  // One straight line for now. Step 09 (#22) replaces it with many route lines.
+  const mapLines = useMemo(
+    () => (start && end ? [[[start.lat, start.lng], [end.lat, end.lng]]] : []),
+    [start, end]
+  )
 
   if (!trip) {
     return (
@@ -107,6 +129,14 @@ export default function Results() {
             You can complete the full tip-to-tip! With {trip.avgDays} days by{' '}
             {trip.transport.name.toLowerCase()}, you've got enough time to make it all the way.
           </p>
+        </div>
+      )}
+
+      {/* Map */}
+      {mapPoints.length > 0 && (
+        <div className="map-section">
+          <h2>Route Map</h2>
+          <RouteMap points={mapPoints} lines={mapLines} showLabels />
         </div>
       )}
 
