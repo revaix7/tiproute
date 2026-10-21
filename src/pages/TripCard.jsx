@@ -38,15 +38,23 @@ export default function TripCard() {
   // An unfinished "I have time" trip ends at the last checkpoint reached
   const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint.name
   const distance = trip.canComplete ? trip.distance : trip.reachableDistance
-  const days = trip.minDays === trip.maxDays ? `${trip.minDays}` : `${trip.minDays}-${trip.maxDays}`
+  // A found trip leads with the average, like the results page, because that is what fits
+  const days =
+    trip.planningMode === 'find'
+      ? `~${trip.avgDays}`
+      : trip.minDays === trip.maxDays
+        ? `${trip.minDays}`
+        : `${trip.minDays}-${trip.maxDays}`
   // A "plan your own trip" card has no country
   const title = trip.country ?? 'Your Route'
   const unfinished = !trip.canComplete
   const tagline = !trip.country
     ? 'Your own start and end'
-    : unfinished
-      ? 'Part of the Tip-to-Tip'
-      : 'Tip-to-Tip'
+    : trip.planningMode === 'find'
+      ? 'Found by the trip finder'
+      : unfinished
+        ? 'Part of the Tip-to-Tip'
+        : 'Tip-to-Tip'
   const planAnotherPath = trip.country ? '/planner' : '/custom'
 
   const handleShare = async () => {

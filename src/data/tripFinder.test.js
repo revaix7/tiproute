@@ -158,4 +158,24 @@ describe('findTrip', () => {
       findTrip({ country: japan, transportMode: mode('bicycle'), days: 10, budget: 600, difficulty: 'Medium' })
     ).toThrow(/Unknown difficulty/)
   })
+
+  it('returns a trip the results page and the trip card can show', () => {
+    const { trip } = findTrip({
+      country: japan,
+      transportMode: mode('bicycle'),
+      days: 10,
+      budget: 600,
+      difficulty: 'Hard',
+    })
+    expect(trip).toMatchObject({
+      startPoint: trip.start.name,
+      endPoint: trip.end.name,
+      planningMode: 'find',
+      canComplete: true,
+      reachableDistance: trip.distance,
+      reachableCheckpoint: trip.end,
+      budgetPerDay: 30,
+    })
+    expect(trip.transport.id).toBe('bicycle')
+  })
 })

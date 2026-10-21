@@ -332,6 +332,42 @@ h3 {
   color: var(--bg);
 }
 
+.difficulty-picker {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 1.5rem;
+}
+
+.difficulty-option {
+  padding: 1rem 0.25rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+}
+
+.difficulty-option + .difficulty-option {
+  border-left: none;
+}
+
+.difficulty-option:hover {
+  background: var(--bg-soft);
+}
+
+.difficulty-option.selected {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.finder-problems {
+  margin: 0.75rem 0 0 1.25rem;
+}
+
 .planner-section {
   border-top: 1px solid var(--rule);
   padding: 2rem 0 3.5rem;
@@ -1029,6 +1065,24 @@ h3 {
   .results-actions,
   .trip-card-actions {
     flex-direction: column;
+  }
+}
+
+/* Five difficulty names and three mode names don't fit side by side on a phone */
+@media (max-width: 640px) {
+  .difficulty-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .difficulty-option + .difficulty-option {
+    border-left: 1px solid var(--rule);
+    border-top: none;
+  }
+
+  .mode-btn {
+    padding: 1rem 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
   }
 }
 

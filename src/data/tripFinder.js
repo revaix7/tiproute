@@ -42,6 +42,21 @@ function possibleTrips(checkpoints, transportMode, dailyBudget) {
   return trips
 }
 
+// The fields the results page and the trip card read, so a found trip shows like any other.
+// A found trip always finishes: its end is the end the finder picked.
+function asResultTrip(trip, base) {
+  return {
+    ...base,
+    ...trip,
+    startPoint: trip.start.name,
+    endPoint: trip.end.name,
+    planningMode: 'find',
+    canComplete: true,
+    reachableDistance: trip.distance,
+    reachableCheckpoint: trip.end,
+  }
+}
+
 const isLonger = (a, b) => a.avgDays > b.avgDays || (a.avgDays === b.avgDays && a.distance > b.distance)
 
 // How far a trip is over each limit, as a share of that limit (0 means it fits)
@@ -106,7 +121,7 @@ export function findTrip({
 
   if (fitting.length > 0) {
     const longest = fitting.reduce((best, trip) => (isLonger(trip, best) ? trip : best))
-    return { found: true, trip: { ...base, ...longest } }
+    return { found: true, trip: asResultTrip(longest, base) }
   }
 
   // Nothing fits: take the trip that breaks the limits by the least
@@ -120,7 +135,7 @@ export function findTrip({
 
   return {
     found: false,
-    trip: { ...base, ...closest.trip },
+    trip: asResultTrip(closest.trip, base),
     problems: explainProblems(closest.trip, closest.over, {
       days,
       budget,
