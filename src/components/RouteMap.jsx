@@ -35,12 +35,14 @@ function ClickHandler({ onMapClick }) {
 // One map for every page: points are { lat, lng, label }, lines are lists of [lat, lng].
 // With interactive false the map cannot be dragged or zoomed (for the trip card).
 // With showLabels the point labels are always visible instead of only on hover.
+// With fitToContent false the map keeps its view when points change (for picking points).
 export default function RouteMap({
   points = [],
   lines = [],
   onMapClick,
   interactive = true,
   showLabels = false,
+  fitToContent = true,
   className = '',
 }) {
   // Open on the content so the map does not start on the whole world and then zoom in
@@ -87,7 +89,7 @@ export default function RouteMap({
           )}
         </CircleMarker>
       ))}
-      <FitToContent points={points} lines={lines} />
+      {fitToContent && <FitToContent points={points} lines={lines} />}
       {onMapClick && <ClickHandler onMapClick={onMapClick} />}
     </MapContainer>
   )
