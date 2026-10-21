@@ -110,6 +110,9 @@ export function progressText(trip) {
   return `${coveredKm.toLocaleString()} of ${totalKm.toLocaleString()} km (${percent}%)`
 }
 
+// From easiest to hardest. A score of 1 is Easy, 5 is Extreme.
+export const DIFFICULTY_LABELS = ['Easy', 'Moderate', 'Challenging', 'Hard', 'Extreme']
+
 export function getDifficulty(baseDifficulty, distance, days) {
   // Scale: 1–5 based on transport difficulty, distance, and pace
   let score = baseDifficulty
@@ -121,8 +124,7 @@ export function getDifficulty(baseDifficulty, distance, days) {
 
   score = Math.min(5, Math.max(1, Math.round(score * 10) / 10))
 
-  const labels = ['Easy', 'Moderate', 'Challenging', 'Hard', 'Extreme']
-  const label = labels[Math.min(Math.floor(score) - 1, 4)]
+  const label = DIFFICULTY_LABELS[Math.min(Math.floor(score) - 1, 4)]
 
   return { score, label }
 }
