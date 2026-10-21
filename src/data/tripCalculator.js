@@ -1,19 +1,33 @@
 // Trip calculation engine
 
+// How long a trip of any distance takes and what it costs. Needs no country,
+// so "plan your own trip" and the trip finder can use it too.
+export function estimateTrip({ distanceKm, transportMode, dailyBudget }) {
+  const mode = transportMode
+  const minDays = Math.ceil(distanceKm / mode.kmPerDay.max)
+  const maxDays = Math.ceil(distanceKm / mode.kmPerDay.min)
+  const avgDays = Math.round((minDays + maxDays) / 2)
+
+  const dailyTotalCost = mode.dailyCost + (distanceKm / avgDays) * mode.costPerKm + dailyBudget
+  const totalBudget = dailyTotalCost * avgDays
+
+  return {
+    minDays,
+    maxDays,
+    avgDays,
+    dailyCost: Math.round(dailyTotalCost),
+    totalBudget: Math.round(totalBudget),
+    difficulty: getDifficulty(mode.difficulty, distanceKm, avgDays),
+  }
+}
+
 export function calculateTrip({ country, transportMode, dailyBudget, planningMode, tripDays }) {
   const distance = country.tipToTip.distanceKm
   const mode = transportMode
 
   if (planningMode === 'route') {
     // "I have a route" — calculate how many days
-    const minDays = Math.ceil(distance / mode.kmPerDay.max)
-    const maxDays = Math.ceil(distance / mode.kmPerDay.min)
-    const avgDays = Math.round((minDays + maxDays) / 2)
-
-    const dailyTotalCost = mode.dailyCost + (distance / avgDays) * mode.costPerKm + dailyBudget
-    const totalBudget = dailyTotalCost * avgDays
-
-    const difficulty = getDifficulty(mode.difficulty, distance, avgDays)
+    const estimate = estimateTrip({ distanceKm: distance, transportMode, dailyBudget })
     const checkpoints = country.tipToTip.checkpoints
 
     return {
@@ -23,13 +37,8 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
       end: country.tipToTip.end,
       country: country.name,
       distance,
-      minDays,
-      maxDays,
-      avgDays,
-      dailyCost: Math.round(dailyTotalCost),
-      totalBudget: Math.round(totalBudget),
+      ...estimate,
       budgetPerDay: dailyBudget,
-      difficulty,
       checkpoints,
       transport: mode,
       planningMode,
@@ -87,7 +96,7 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
   }
 }
 
-function getDifficulty(baseDifficulty, distance, days) {
+export function getDifficulty(baseDifficulty, distance, days) {
   // Scale: 1–5 based on transport difficulty, distance, and pace
   let score = baseDifficulty
 
