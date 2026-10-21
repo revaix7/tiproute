@@ -1,24 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { countries, transportModes } from '../data/countries'
-import {
-  calculateTrip,
-  compareEstimates,
-  compareTransportModes,
-  DIFFICULTY_LABELS,
-} from '../data/tripCalculator'
-import { findTrip, DEFAULT_DAILY_BUDGET } from '../data/tripFinder'
+import { DIFFICULTY_LABELS } from '../data/tripCalculator'
+import { DEFAULT_DAILY_BUDGET } from '../data/tripFinder'
+import { tripSearch, MAX_TRIP_DAYS, TOTAL_BUDGET as TOTAL_BUDGET_LIMITS } from '../data/tripLink'
 import TransportPicker from '../components/TransportPicker'
 import BudgetSlider from '../components/BudgetSlider'
 
-// Long enough to walk the longest route at the slowest pace
-const MAX_TRIP_DAYS = Math.ceil(
-  Math.max(...countries.map((c) => c.tipToTip.distanceKm)) /
-    Math.min(...transportModes.map((t) => t.kmPerDay.min))
-)
-
 // Total money for "Find me a trip", transport and living costs together
-const TOTAL_BUDGET = { min: 100, max: 20000, step: 100, initial: 2000 }
+const TOTAL_BUDGET = { ...TOTAL_BUDGET_LIMITS, step: 100, initial: 2000 }
 
 const PLANNING_MODES = [
   { id: 'route', label: 'I have a route' },
@@ -79,45 +69,20 @@ export default function Planner() {
     }
   }, [planningMode, selectedCountry, selectedTransport, dailyBudget, tripDays, totalBudget, maxDifficulty])
 
-  // "Find me a trip": a start and an end on the route that fit the days, money and difficulty
-  const handleFind = () => {
-    const { found, trip, problems } = findTrip({
-      country: selectedCountry,
-      transportMode: selectedTransport,
+  // The results page works the trip out from the link, so the link can be shared (#6).
+  // "Find me a trip" picks a start and an end that fit the days, money and difficulty.
+  const handlePlan = () => {
+    if (!selectedCountry) return
+    const search = tripSearch({
+      mode: planningMode,
+      country: selectedCountry.code,
+      transport: selectedTransport.id,
+      daily: dailyBudget,
       days: tripDays,
       budget: totalBudget,
       difficulty: maxDifficulty,
     })
-    const comparison = compareEstimates({
-      distanceKm: trip.distance,
-      transportModes,
-      dailyBudget: DEFAULT_DAILY_BUDGET,
-    })
-    const finder = { found, problems: problems ?? [], days: tripDays, budget: totalBudget, difficulty: maxDifficulty }
-    navigate('/results', { state: { trip: { ...trip, finder }, comparison } })
-  }
-
-  const handlePlan = () => {
-    if (!selectedCountry) return
-    if (planningMode === 'find') return handleFind()
-
-    const result = calculateTrip({
-      country: selectedCountry,
-      transportMode: selectedTransport,
-      dailyBudget,
-      planningMode,
-      tripDays,
-    })
-
-    const comparison = compareTransportModes({
-      country: selectedCountry,
-      transportModes,
-      dailyBudget,
-      planningMode,
-      tripDays,
-    })
-
-    navigate('/results', { state: { trip: result, comparison } })
+    navigate(`/results?${search}`)
   }
 
   return (

@@ -25,8 +25,9 @@ class ErrorBoundary extends Component {
 }
 
 // When a page crashes, show a message instead of a blank screen. The navbar stays,
-// and going to another page tries again.
+// and going to another page or another trip link tries again.
 export default function PageErrorBoundary({ children }) {
   const location = useLocation()
-  return <ErrorBoundary key={location.key}>{children}</ErrorBoundary>
+  const key = `${location.key}${location.pathname}${location.search}`
+  return <ErrorBoundary key={key}>{children}</ErrorBoundary>
 }
