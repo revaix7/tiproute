@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { distanceBetween, roadDistanceBetween, startEndPoints, ROAD_FACTOR } from './geo'
+import { distanceBetween, roadDistanceBetween, startEndPoints, tripMapPoints, ROAD_FACTOR } from './geo'
 
 const london = { lat: 51.5074, lng: -0.1278 }
 const paris = { lat: 48.8566, lng: 2.3522 }
@@ -39,5 +39,32 @@ describe('startEndPoints', () => {
   it('gives no points when one is missing', () => {
     expect(startEndPoints(null, paris)).toEqual([])
     expect(startEndPoints(london, undefined)).toEqual([])
+  })
+})
+
+describe('tripMapPoints', () => {
+  const start = { ...london, name: 'London' }
+  const end = { ...paris, name: 'Paris' }
+  const calais = { lat: 50.95, lng: 1.86, name: 'Calais' }
+
+  it('shows only the start and the end of a finished trip', () => {
+    const points = tripMapPoints({ start, end, canComplete: true, reachableCheckpoint: end })
+    expect(points.map((p) => p.label)).toEqual(['Start: London', 'End: Paris'])
+  })
+
+  it('adds a hollow point where an unfinished trip stops, and keeps the real end', () => {
+    const points = tripMapPoints({ start, end, canComplete: false, reachableCheckpoint: calais })
+    expect(points.map((p) => p.label)).toEqual(['Start: London', 'End: Paris', 'You reach: Calais'])
+    expect(points[2]).toMatchObject({ lat: calais.lat, lng: calais.lng, hollow: true })
+    expect(points[0].hollow).toBeUndefined()
+  })
+
+  it('adds no extra point when an unfinished trip never leaves the start', () => {
+    const points = tripMapPoints({ start, end, canComplete: false, reachableCheckpoint: start })
+    expect(points).toHaveLength(2)
+  })
+
+  it('gives no points without a trip', () => {
+    expect(tripMapPoints(undefined)).toEqual([])
   })
 })

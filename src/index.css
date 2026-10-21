@@ -605,6 +605,22 @@ h3 {
   line-height: 1.1;
 }
 
+/* Checkpoints an unfinished trip does not reach */
+.checkpoint.not-reached .checkpoint-marker,
+.checkpoint.not-reached .checkpoint-name {
+  color: var(--ink-muted);
+}
+
+.checkpoint-tag {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
 /* Transport Comparison */
 .comparison-table {
   margin-top: 1.5rem;
@@ -722,6 +738,15 @@ h3 {
 .card-route {
   border-top: 1px solid #4d4d4d;
   padding: 1.5rem 0;
+}
+
+.card-progress {
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bdbdbd;
 }
 
 .card-point {

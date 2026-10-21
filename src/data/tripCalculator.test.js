@@ -5,6 +5,8 @@ import {
   compareTransportModes,
   estimateTrip,
   getDifficulty,
+  progressText,
+  routeProgress,
 } from './tripCalculator'
 import { countries, transportModes } from './countries'
 
@@ -242,5 +244,19 @@ describe('compareEstimates', () => {
     expect(options.map((o) => [o.id, o.isCheapest, o.isFastest])).toEqual(
       fromCountry.map((o) => [o.id, o.isCheapest, o.isFastest])
     )
+  })
+})
+
+describe('routeProgress and progressText', () => {
+  it('covers the whole route when the trip is finished', () => {
+    const trip = { distance: 2100, canComplete: true, reachableDistance: 2100 }
+    expect(routeProgress(trip)).toEqual({ coveredKm: 2100, totalKm: 2100, percent: 100 })
+  })
+
+  it('covers part of the route when the trip is unfinished', () => {
+    // New Zealand on foot in 14 days, from issue #11
+    const trip = { distance: 2100, canComplete: false, reachableDistance: 385 }
+    expect(routeProgress(trip)).toEqual({ coveredKm: 385, totalKm: 2100, percent: 18 })
+    expect(progressText(trip)).toBe(`385 of ${(2100).toLocaleString()} km (18%)`)
   })
 })

@@ -96,6 +96,20 @@ export function calculateTrip({ country, transportMode, dailyBudget, planningMod
   }
 }
 
+// How much of the route a trip covers: all of it, or part of it for an unfinished
+// "I have time" trip
+export function routeProgress(trip) {
+  const totalKm = trip.distance
+  const coveredKm = trip.canComplete ? totalKm : trip.reachableDistance
+  return { coveredKm, totalKm, percent: Math.round((coveredKm / totalKm) * 100) }
+}
+
+// "385 of 2,100 km (18%)", for the trip card and the share text
+export function progressText(trip) {
+  const { coveredKm, totalKm, percent } = routeProgress(trip)
+  return `${coveredKm.toLocaleString()} of ${totalKm.toLocaleString()} km (${percent}%)`
+}
+
 export function getDifficulty(baseDifficulty, distance, days) {
   // Scale: 1–5 based on transport difficulty, distance, and pace
   let score = baseDifficulty

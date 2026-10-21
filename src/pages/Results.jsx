@@ -3,7 +3,8 @@ import { useLocation, useNavigate, Link } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
 import ComparisonTable from '../components/ComparisonTable'
 import { DIFFICULTY_COLORS } from '../components/difficultyColors'
-import { startEndPoints } from '../data/geo'
+import { tripMapPoints } from '../data/geo'
+import { routeProgress } from '../data/tripCalculator'
 import { getRouteLines } from '../data/routes'
 import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
 
@@ -14,10 +15,10 @@ export default function Results() {
   const comparison = location.state?.comparison
 
   // Kept stable between renders so the map does not zoom back on every render.
-  // Always the full route, even for an unfinished "I have time" trip (#11 shows how far it gets).
+  // Always the full route; an unfinished "I have time" trip also marks where it stops.
   const start = trip?.start
   const end = trip?.end
-  const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
+  const mapPoints = useMemo(() => tripMapPoints(trip), [trip])
   // Many ways to get there, passing near the whole route's checkpoints
   const routeCheckpoints = trip?.allCheckpoints ?? trip?.checkpoints
   const mapLines = useMemo(
@@ -45,6 +46,9 @@ export default function Results() {
 
   // Only "I have time" trips have a fixed day count
   const isTimeMode = trip.minDays === trip.maxDays
+  // Every checkpoint on the route; the ones after the last one reached are greyed out
+  const allCheckpoints = trip.allCheckpoints ?? trip.checkpoints
+  const reachedCount = trip.checkpoints.length
 
   return (
     <div className="results">
@@ -115,7 +119,7 @@ export default function Results() {
           <p>
             With {trip.avgDays} days by {trip.transport.name.toLowerCase()}, you'd cover ~
             {trip.reachableDistance.toLocaleString()} km and reach <strong>{trip.reachableCheckpoint.name}</strong>.
-            That's {Math.round((trip.reachableDistance / trip.distance) * 100)}% of the full route.
+            That's {routeProgress(trip).percent}% of the full route.
           </p>
         </div>
       )}
@@ -141,10 +145,14 @@ export default function Results() {
       <div className="checkpoints-section">
         <h2>Route Checkpoints</h2>
         <div className="checkpoint-list">
-          {trip.checkpoints.map((cp, i) => (
-            <div key={cp.name} className="checkpoint">
+          {allCheckpoints.map((cp, i) => (
+            <div key={cp.name} className={`checkpoint ${i < reachedCount ? '' : 'not-reached'}`}>
               <span className="checkpoint-marker">{String(i + 1).padStart(2, '0')}</span>
               <span className="checkpoint-name">{cp.name}</span>
+              {!trip.canComplete && i === reachedCount - 1 && (
+                <span className="checkpoint-tag">You reach here</span>
+              )}
+              {i >= reachedCount && <span className="checkpoint-tag">Not reached</span>}
             </div>
           ))}
         </div>
