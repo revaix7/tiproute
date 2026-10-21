@@ -12,7 +12,8 @@ import PageErrorBoundary from './components/PageErrorBoundary'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    // On GitHub Pages the app lives under /tiproute/
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
       <Navbar />
       <PageErrorBoundary>
