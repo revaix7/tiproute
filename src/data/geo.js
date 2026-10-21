@@ -29,7 +29,19 @@ export function tripMapPoints(trip) {
   if (points.length === 0 || trip.canComplete || !reached || reached.name === trip.start.name) {
     return points
   }
-  return [...points, { ...reached, label: `You reach: ${reached.name}`, hollow: true }]
+  // The two can be close together, so their labels go on opposite sides: the start's
+  // label away from the reach point, and the reach point's label sideways, away from the start
+  const [startPoint, endPoint] = points
+  return [
+    { ...startPoint, labelDirection: reached.lat > startPoint.lat ? 'bottom' : 'top' },
+    endPoint,
+    {
+      ...reached,
+      label: `You reach: ${reached.name}`,
+      hollow: true,
+      labelDirection: reached.lng < startPoint.lng ? 'left' : 'right',
+    },
+  ]
 }
 
 // Roads are longer than a straight line
