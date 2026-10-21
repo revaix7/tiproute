@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
+import ComparisonTable from '../components/ComparisonTable'
+import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { startEndPoints } from '../data/geo'
 import { getRouteLines } from '../data/routes'
 
@@ -42,14 +44,6 @@ export default function Results() {
         <Link to="/planner" className="cta-button">Go to Planner</Link>
       </div>
     )
-  }
-
-  const difficultyColor = {
-    Easy: '#15803d',
-    Moderate: '#a16207',
-    Challenging: '#c2410c',
-    Hard: '#b91c1c',
-    Extreme: '#7f1d1d',
   }
 
   // Only "I have time" trips have a fixed day count
@@ -109,7 +103,7 @@ export default function Results() {
           <div className="stat-info">
             <span
               className="stat-value"
-              style={{ color: difficultyColor[trip.difficulty.label] }}
+              style={{ color: DIFFICULTY_COLORS[trip.difficulty.label] }}
             >
               {trip.difficulty.label} ({trip.difficulty.score}/5)
             </span>
@@ -164,37 +158,11 @@ export default function Results() {
         <div className="comparison-section">
           <h2>Compare Your Options</h2>
           <p className="section-note">Same route and daily budget, every way to travel</p>
-          <div className="comparison-table">
-            <div className="comparison-row comparison-head">
-              <span>Transport</span>
-              <span>{isTimeMode ? 'Distance' : 'Time'}</span>
-              <span>Budget</span>
-              <span>Difficulty</span>
-            </div>
-            {comparison.map((option) => (
-              <div
-                key={option.id}
-                className={`comparison-row ${option.id === trip.transport.id ? 'selected' : ''}`}
-              >
-                <span className="comparison-mode">
-                  <span className="comparison-emoji">{option.emoji}</span> {option.name}
-                  {option.isCheapest && <span className="comparison-tag">Cheapest</span>}
-                  {option.isFastest && (
-                    <span className="comparison-tag">{isTimeMode ? 'Farthest' : 'Fastest'}</span>
-                  )}
-                </span>
-                <span>
-                  {isTimeMode
-                    ? `${option.reachableDistance.toLocaleString()} km (${option.percentOfRoute}%)`
-                    : `${option.minDays}–${option.maxDays} days`}
-                </span>
-                <span>${option.totalBudget.toLocaleString()}</span>
-                <span style={{ color: difficultyColor[option.difficulty.label] }}>
-                  {option.difficulty.label}
-                </span>
-              </div>
-            ))}
-          </div>
+          <ComparisonTable
+            options={comparison}
+            selectedId={trip.transport.id}
+            isTimeMode={isTimeMode}
+          />
         </div>
       )}
 

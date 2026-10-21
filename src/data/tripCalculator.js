@@ -139,3 +139,26 @@ export function compareTransportModes({ country, transportModes, dailyBudget, pl
     isFastest: planningMode === 'route' ? t.avgDays === fastest : t.reachableDistance === farthest,
   }))
 }
+
+// The same distance with every transport mode, for a trip with no country ("plan your own trip")
+export function compareEstimates({ distanceKm, transportModes, dailyBudget }) {
+  const estimates = transportModes.map((transportMode) => ({
+    transportMode,
+    ...estimateTrip({ distanceKm, transportMode, dailyBudget }),
+  }))
+
+  const cheapest = Math.min(...estimates.map((e) => e.totalBudget))
+  const fastest = Math.min(...estimates.map((e) => e.avgDays))
+
+  return estimates.map((e) => ({
+    id: e.transportMode.id,
+    name: e.transportMode.name,
+    emoji: e.transportMode.emoji,
+    minDays: e.minDays,
+    maxDays: e.maxDays,
+    totalBudget: e.totalBudget,
+    difficulty: e.difficulty,
+    isCheapest: e.totalBudget === cheapest,
+    isFastest: e.avgDays === fastest,
+  }))
+}

@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { calculateTrip, compareTransportModes, estimateTrip, getDifficulty } from './tripCalculator'
+import {
+  calculateTrip,
+  compareEstimates,
+  compareTransportModes,
+  estimateTrip,
+  getDifficulty,
+} from './tripCalculator'
 import { countries, transportModes } from './countries'
 
 // Round numbers so every expected value can be worked out by hand
@@ -206,5 +212,35 @@ describe('compareTransportModes', () => {
     const walking = options.find((o) => o.id === 'walking')
     expect(walking.canComplete).toBe(false)
     expect(walking.percentOfRoute).toBe(Math.round((walking.reachableDistance / 2800) * 100))
+  })
+})
+
+describe('compareEstimates', () => {
+  const options = compareEstimates({ distanceKm: 2800, transportModes, dailyBudget: 30 })
+
+  it('gives the same numbers as estimateTrip for each mode', () => {
+    for (const transportMode of transportModes) {
+      const option = options.find((o) => o.id === transportMode.id)
+      const estimate = estimateTrip({ distanceKm: 2800, transportMode, dailyBudget: 30 })
+      expect(option).toMatchObject({
+        minDays: estimate.minDays,
+        maxDays: estimate.maxDays,
+        totalBudget: estimate.totalBudget,
+        difficulty: estimate.difficulty,
+      })
+    }
+  })
+
+  it('flags the same cheapest and fastest modes as a country with that distance', () => {
+    // Japan's route is 2,800 km, so its comparison must agree
+    const fromCountry = compareTransportModes({
+      country: japan,
+      transportModes,
+      dailyBudget: 30,
+      planningMode: 'route',
+    })
+    expect(options.map((o) => [o.id, o.isCheapest, o.isFastest])).toEqual(
+      fromCountry.map((o) => [o.id, o.isCheapest, o.isFastest])
+    )
   })
 })

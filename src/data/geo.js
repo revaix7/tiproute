@@ -20,3 +20,11 @@ export function startEndPoints(start, end) {
     { ...end, label: `End: ${end.name}` },
   ]
 }
+
+// Roads are longer than a straight line
+export const ROAD_FACTOR = 1.3
+
+// Estimated road distance in km between two { lat, lng } points
+export function roadDistanceBetween(a, b) {
+  return distanceBetween(a, b) * ROAD_FACTOR
+}

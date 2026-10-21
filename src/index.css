@@ -338,6 +338,7 @@ h3 {
 
 .planner-section h2,
 .map-section h2,
+.estimate-section h2,
 .checkpoints-section h2,
 .comparison-section h2 {
   font-size: 2.25rem;
@@ -564,8 +565,9 @@ h3 {
   color: var(--bg);
 }
 
-/* Map, checkpoints and comparison */
+/* Map, estimate, checkpoints and comparison */
 .map-section,
+.estimate-section,
 .checkpoints-section,
 .comparison-section {
   border-top: 1px solid var(--rule);
@@ -895,6 +897,16 @@ h3 {
   padding-top: 0.75rem;
 }
 
+.estimate-section .results-grid {
+  margin-top: 1.5rem;
+}
+
+.estimate-warning {
+  border: 1px solid var(--ink);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+
 .picked-coords {
   font-size: 1.15rem;
   font-weight: 600;
@@ -944,6 +956,7 @@ h3 {
 
   .planner-section h2,
   .map-section h2,
+  .estimate-section h2,
   .checkpoints-section h2,
   .comparison-section h2 {
     font-size: 1.75rem;
