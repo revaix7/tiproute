@@ -59,6 +59,17 @@ describe('tripMapPoints', () => {
     expect(points[0].hollow).toBeUndefined()
   })
 
+  it('puts the start and reach labels on different sides so they do not cover each other', () => {
+    // Calais is south and east of London
+    const points = tripMapPoints({ start, end, canComplete: false, reachableCheckpoint: calais })
+    expect(points[0].labelDirection).toBe('top')
+    expect(points[2].labelDirection).toBe('right')
+    // From Paris, Calais is north and west
+    const fromParis = tripMapPoints({ start: end, end: start, canComplete: false, reachableCheckpoint: calais })
+    expect(fromParis[0].labelDirection).toBe('bottom')
+    expect(fromParis[2].labelDirection).toBe('left')
+  })
+
   it('adds no extra point when an unfinished trip never leaves the start', () => {
     const points = tripMapPoints({ start, end, canComplete: false, reachableCheckpoint: start })
     expect(points).toHaveLength(2)

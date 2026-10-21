@@ -148,7 +148,8 @@ h3 {
 .custom-planner,
 .planner,
 .results,
-.trip-card-page {
+.trip-card-page,
+.page {
   max-width: var(--page-width);
   margin: 0 auto;
   padding: 0 var(--page-pad) 5rem;
