@@ -1,15 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet'
 
 const WORLD_CENTER = [20, 0]
-const FIT_OPTIONS = { padding: [30, 30] }
+const DEFAULT_FIT_PADDING = 30
 
 function contentCoords(points, lines) {
   return [...points.map((p) => [p.lat, p.lng]), ...lines.flat()]
 }
 
 // Zooms the map so every point and line is in view when they change
-function FitToContent({ points, lines }) {
+function FitToContent({ points, lines, fitOptions }) {
   const map = useMap()
 
   useEffect(() => {
@@ -18,9 +18,9 @@ function FitToContent({ points, lines }) {
     if (coords.length === 1) {
       map.setView(coords[0], 8)
     } else {
-      map.fitBounds(coords, FIT_OPTIONS)
+      map.fitBounds(coords, fitOptions)
     }
-  }, [map, points, lines])
+  }, [map, points, lines, fitOptions])
 
   return null
 }
@@ -36,6 +36,7 @@ function ClickHandler({ onMapClick }) {
 // With interactive false the map cannot be dragged or zoomed (for the trip card).
 // With showLabels the point labels are always visible instead of only on hover.
 // With fitToContent false the map keeps its view when points change (for picking points).
+// fitPadding is the space in pixels kept around the content (smaller for small maps).
 export default function RouteMap({
   points = [],
   lines = [],
@@ -43,13 +44,16 @@ export default function RouteMap({
   interactive = true,
   showLabels = false,
   fitToContent = true,
+  fitPadding = DEFAULT_FIT_PADDING,
   className = '',
 }) {
+  const fitOptions = useMemo(() => ({ padding: [fitPadding, fitPadding] }), [fitPadding])
+
   // Open on the content so the map does not start on the whole world and then zoom in
   const coords = contentCoords(points, lines)
   const initialView =
     coords.length > 1
-      ? { bounds: coords, boundsOptions: FIT_OPTIONS }
+      ? { bounds: coords, boundsOptions: fitOptions }
       : { center: coords[0] ?? WORLD_CENTER, zoom: coords.length === 1 ? 8 : 2 }
 
   return (
@@ -89,7 +93,7 @@ export default function RouteMap({
           )}
         </CircleMarker>
       ))}
-      {fitToContent && <FitToContent points={points} lines={lines} />}
+      {fitToContent && <FitToContent points={points} lines={lines} fitOptions={fitOptions} />}
       {onMapClick && <ClickHandler onMapClick={onMapClick} />}
     </MapContainer>
   )

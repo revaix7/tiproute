@@ -1,10 +1,17 @@
 import { useLocation, Link } from 'react-router-dom'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
+import RouteMap from '../components/RouteMap'
+import { startEndPoints } from '../data/geo'
 
 export default function TripCard() {
   const location = useLocation()
   const trip = location.state?.trip
   const cardRef = useRef(null)
+
+  // Same points as the results page, but an unfinished trip ends at the last checkpoint reached
+  const start = trip?.start
+  const end = trip && !trip.canComplete ? trip.reachableCheckpoint : trip?.end
+  const mapPoints = useMemo(() => startEndPoints(start, end), [start, end])
 
   if (!trip) {
     return (
@@ -76,6 +83,11 @@ export default function TripCard() {
             <span>{endPoint}</span>
           </div>
         </div>
+
+        {/* Only the two points, no route lines, and it cannot be dragged or zoomed */}
+        {mapPoints.length > 0 && (
+          <RouteMap points={mapPoints} interactive={false} fitPadding={12} className="card-map" />
+        )}
 
         <div className="card-stats">
           <div className="card-stat">

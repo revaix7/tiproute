@@ -11,3 +11,12 @@ export function distanceBetween(a, b) {
     Math.cos(toRadians(a.lat)) * Math.cos(toRadians(b.lat)) * Math.sin(dLng / 2) ** 2
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h))
 }
+
+// The start and end of a trip as labelled map points, the same on every page
+export function startEndPoints(start, end) {
+  if (!start || !end) return []
+  return [
+    { ...start, label: `Start: ${start.name}` },
+    { ...end, label: `End: ${end.name}` },
+  ]
+}
