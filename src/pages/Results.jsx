@@ -45,7 +45,12 @@ export default function Results() {
   }
 
   // Only "I have time" trips have a fixed day count
-  const isTimeMode = trip.minDays === trip.maxDays
+  const isTimeMode = trip.planningMode === 'time'
+  // "Find me a trip" picked this start and end; finder says whether it fits the limits
+  const finder = trip.planningMode === 'find' ? trip.finder : null
+  const title = finder
+    ? `${trip.country}: ${finder.found ? 'Your Trip' : 'Closest Trip'}`
+    : `${trip.country} Tip-to-Tip`
   // Every checkpoint on the route; the ones after the last one reached are greyed out
   const allCheckpoints = trip.allCheckpoints ?? trip.checkpoints
   const reachedCount = trip.checkpoints.length
@@ -53,7 +58,7 @@ export default function Results() {
   return (
     <div className="results">
       <div className="results-header">
-        <h1>{trip.country} Tip-to-Tip</h1>
+        <h1>{title}</h1>
         <p className="results-route">
           {trip.startPoint} {'\u2192'} {trip.endPoint}
         </p>
@@ -70,12 +75,18 @@ export default function Results() {
 
         <div className="stat-card">
           <div className="stat-info">
+            {/* The finder checks the average against the user's days, so lead with it */}
             <span className="stat-value">
-              {trip.minDays === trip.maxDays
-                ? `${trip.minDays} days`
-                : `${trip.minDays}\u2013${trip.maxDays} days`}
+              {finder
+                ? `About ${trip.avgDays} ${trip.avgDays === 1 ? 'day' : 'days'}`
+                : trip.minDays === trip.maxDays
+                  ? `${trip.minDays} days`
+                  : `${trip.minDays}\u2013${trip.maxDays} days`}
             </span>
-            <span className="stat-label">Estimated Time</span>
+            <span className="stat-label">
+              Estimated Time
+              {finder && trip.minDays !== trip.maxDays && ` (${trip.minDays}\u2013${trip.maxDays})`}
+            </span>
           </div>
         </div>
 
@@ -130,6 +141,27 @@ export default function Results() {
             You can complete the full tip-to-tip! With {trip.avgDays} days by{' '}
             {trip.transport.name.toLowerCase()}, you've got enough time to make it all the way.
           </p>
+        </div>
+      )}
+
+      {/* Trip finder: does the trip fit, and if not, which limit is the problem */}
+      {finder?.found && (
+        <div className="completion-success">
+          <p>
+            Found it! This trip fits your {finder.days} {finder.days === 1 ? 'day' : 'days'}, $
+            {finder.budget.toLocaleString()} and {finder.difficulty} at most.
+          </p>
+        </div>
+      )}
+
+      {finder && !finder.found && (
+        <div className="completion-warning">
+          <p>No trip in {trip.country} fits all your limits. This is the closest one:</p>
+          <ul className="finder-problems">
+            {finder.problems.map((p) => (
+              <li key={p.limit}>{p.message}</li>
+            ))}
+          </ul>
         </div>
       )}
 
