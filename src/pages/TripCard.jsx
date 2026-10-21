@@ -40,9 +40,13 @@ export default function TripCard() {
   const endPoint = trip.canComplete ? trip.endPoint : trip.reachableCheckpoint.name
   const distance = trip.canComplete ? trip.distance : trip.reachableDistance
   const days = trip.minDays === trip.maxDays ? `${trip.minDays}` : `${trip.minDays}-${trip.maxDays}`
+  // A "plan your own trip" card has no country
+  const title = trip.country ?? 'Your Route'
+  const tagline = trip.country ? 'Tip-to-Tip' : 'Your own start and end'
+  const planAnotherPath = trip.country ? '/planner' : '/custom'
 
   const handleShare = async () => {
-    const text = `TIPROUTE Challenge\n${trip.country}: ${trip.startPoint} \u2192 ${endPoint}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
+    const text = `TIPROUTE Challenge\n${trip.country ?? 'My own route'}: ${trip.startPoint} \u2192 ${endPoint}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
 
     if (navigator.share) {
       try {
@@ -68,8 +72,8 @@ export default function TripCard() {
       <div className="trip-card" ref={cardRef}>
         <div className="card-header">
           <span className="card-badge">CHALLENGE</span>
-          <h2 className="card-country">{trip.country}</h2>
-          <p className="card-tagline">Tip-to-Tip</p>
+          <h2 className="card-country">{title}</h2>
+          <p className="card-tagline">{tagline}</p>
         </div>
 
         <div className="card-route">
@@ -125,7 +129,7 @@ export default function TripCard() {
         <button className="cta-button" onClick={handleShare}>
           Share Trip Card
         </button>
-        <Link to="/planner" className="secondary-button">Plan Another</Link>
+        <Link to={planAnotherPath} className="secondary-button">Plan Another</Link>
       </div>
     </div>
   )

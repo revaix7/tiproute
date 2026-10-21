@@ -5,10 +5,7 @@ import ComparisonTable from '../components/ComparisonTable'
 import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { startEndPoints } from '../data/geo'
 import { getRouteLines } from '../data/routes'
-
-const ROUTE_LINE_COUNT = 40
-// Thin and see-through, so the route looks darker where many lines overlap
-const ROUTE_LINE_STYLE = { color: '#000', weight: 1, opacity: 0.25 }
+import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
 
 export default function Results() {
   const location = useLocation()

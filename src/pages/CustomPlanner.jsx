@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
 import TransportPicker from '../components/TransportPicker'
 import BudgetSlider from '../components/BudgetSlider'
@@ -7,6 +8,8 @@ import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { transportModes } from '../data/countries'
 import { distanceBetween, roadDistanceBetween } from '../data/geo'
 import { estimateTrip, compareEstimates } from '../data/tripCalculator'
+import { getRouteLines } from '../data/routes'
+import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
 
 // Closer than this, there is no trip to estimate
 const MIN_DISTANCE_KM = 1
@@ -18,20 +21,53 @@ function wrapLng(lng) {
   return ((((lng + 180) % 360) + 360) % 360) - 180
 }
 
-function formatPoint({ lat, lng }) {
+function formatPoint({ lat, lng }, decimals = 4) {
   const wrapped = wrapLng(lng)
-  const latText = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`
-  const lngText = `${Math.abs(wrapped).toFixed(4)}° ${wrapped >= 0 ? 'E' : 'W'}`
+  const latText = `${Math.abs(lat).toFixed(decimals)}° ${lat >= 0 ? 'N' : 'S'}`
+  const lngText = `${Math.abs(wrapped).toFixed(decimals)}° ${wrapped >= 0 ? 'E' : 'W'}`
   return `${latText}, ${lngText}`
 }
+
+const STORAGE_KEY = 'tiproute.custom'
+
+// Points and choices from the last visit in this tab, so coming back from the trip card
+// doesn't lose the trip
+function loadSaved() {
+  try {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) ?? {}
+  } catch {
+    return {}
+  }
+}
+
+const isPoint = (p) => p != null && Number.isFinite(p.lat) && Number.isFinite(p.lng)
 
 // "Plan your own trip": click a start and an end anywhere in the world, and the time
 // and cost are worked out from the distance. Nothing to type in, everything updates live.
 export default function CustomPlanner() {
-  const [start, setStart] = useState(null)
-  const [end, setEnd] = useState(null)
-  const [transportMode, setTransportMode] = useState(transportModes[0])
-  const [dailyBudget, setDailyBudget] = useState(30)
+  const navigate = useNavigate()
+  const [saved] = useState(loadSaved)
+  const [start, setStart] = useState(isPoint(saved.start) ? saved.start : null)
+  const [end, setEnd] = useState(isPoint(saved.start) && isPoint(saved.end) ? saved.end : null)
+  const [transportMode, setTransportMode] = useState(
+    transportModes.find((t) => t.id === saved.transportId) ?? transportModes[0]
+  )
+  const [dailyBudget, setDailyBudget] = useState(
+    Number.isInteger(saved.dailyBudget) && saved.dailyBudget >= 5 && saved.dailyBudget <= 150
+      ? saved.dailyBudget
+      : 30
+  )
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ start, end, transportId: transportMode.id, dailyBudget })
+      )
+    } catch {
+      // Storage unavailable: the page still works, it just won't remember
+    }
+  }, [start, end, transportMode, dailyBudget])
 
   const tooClose = start && end && distanceBetween(start, end) < MIN_DISTANCE_KM
   const distanceKm = start && end && !tooClose ? Math.round(roadDistanceBetween(start, end)) : null
@@ -59,10 +95,34 @@ export default function CustomPlanner() {
     ],
     [start, end]
   )
+  // Many ways to get there once both points are set (generated lines, see #20)
   const lines = useMemo(
-    () => (start && end ? [[[start.lat, start.lng], [end.lat, end.lng]]] : []),
-    [start, end]
+    () =>
+      start && end && !tooClose
+        ? getRouteLines({ from: start, to: end, count: ROUTE_LINE_COUNT })
+        : [],
+    [start, end, tooClose]
   )
+
+  // The trip card reads the same fields as a pre-planned trip; there is no country
+  const openTripCard = () => {
+    const named = (point) => ({ ...point, name: formatPoint(point, 2) })
+    const trip = {
+      country: null,
+      start: named(start),
+      end: named(end),
+      startPoint: formatPoint(start, 2),
+      endPoint: formatPoint(end, 2),
+      distance: distanceKm,
+      ...estimate,
+      budgetPerDay: dailyBudget,
+      transport: transportMode,
+      planningMode: 'custom',
+      canComplete: true,
+      reachableDistance: distanceKm,
+    }
+    navigate('/trip-card', { state: { trip } })
+  }
 
   const instruction = !start
     ? 'Click the map to set your start'
@@ -83,6 +143,7 @@ export default function CustomPlanner() {
         <RouteMap
           points={points}
           lines={lines}
+          lineStyle={ROUTE_LINE_STYLE}
           onMapClick={handleMapClick}
           showLabels
           fitToContent={false}
@@ -192,6 +253,14 @@ export default function CustomPlanner() {
           <h2>Compare Your Options</h2>
           <p className="section-note">Same start, end and daily budget, every way to travel</p>
           <ComparisonTable options={comparison} selectedId={transportMode.id} />
+        </div>
+      )}
+
+      {estimate && (
+        <div className="results-actions">
+          <button className="cta-button" onClick={openTripCard}>
+            Generate Trip Card
+          </button>
         </div>
       )}
     </div>
