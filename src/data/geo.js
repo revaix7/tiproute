@@ -12,6 +12,19 @@ export function distanceBetween(a, b) {
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h))
 }
 
+// Leaflet gives longitudes past ±180 when you click a repeated copy of the world
+export function wrapLng(lng) {
+  return ((((lng + 180) % 360) + 360) % 360) - 180
+}
+
+// "48.8566° N, 2.3522° E"
+export function formatPoint({ lat, lng }, decimals = 4) {
+  const wrapped = wrapLng(lng)
+  const latText = `${Math.abs(lat).toFixed(decimals)}° ${lat >= 0 ? 'N' : 'S'}`
+  const lngText = `${Math.abs(wrapped).toFixed(decimals)}° ${wrapped >= 0 ? 'E' : 'W'}`
+  return `${latText}, ${lngText}`
+}
+
 // The start and end of a trip as labelled map points, the same on every page
 export function startEndPoints(start, end) {
   if (!start || !end) return []

@@ -6,27 +6,13 @@ import BudgetSlider from '../components/BudgetSlider'
 import ComparisonTable from '../components/ComparisonTable'
 import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { transportModes } from '../data/countries'
-import { distanceBetween, roadDistanceBetween } from '../data/geo'
+import { distanceBetween, formatPoint, roadDistanceBetween } from '../data/geo'
 import { estimateTrip, compareEstimates } from '../data/tripCalculator'
 import { getRouteLines } from '../data/routes'
 import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
-
-// Closer than this, there is no trip to estimate
-const MIN_DISTANCE_KM = 1
+import { tripSearch, COORD_DECIMALS, MIN_DISTANCE_KM } from '../data/tripLink'
 // Further than this, the trip probably crosses a sea, which the estimate does not know about
 const LONG_TRIP_KM = 5000
-
-// Leaflet gives longitudes past ±180 when you click a repeated copy of the world
-function wrapLng(lng) {
-  return ((((lng + 180) % 360) + 360) % 360) - 180
-}
-
-function formatPoint({ lat, lng }, decimals = 4) {
-  const wrapped = wrapLng(lng)
-  const latText = `${Math.abs(lat).toFixed(decimals)}° ${lat >= 0 ? 'N' : 'S'}`
-  const lngText = `${Math.abs(wrapped).toFixed(decimals)}° ${wrapped >= 0 ? 'E' : 'W'}`
-  return `${latText}, ${lngText}`
-}
 
 const STORAGE_KEY = 'tiproute.custom'
 
@@ -74,8 +60,10 @@ export default function CustomPlanner() {
   const estimate = distanceKm ? estimateTrip({ distanceKm, transportMode, dailyBudget }) : null
   const comparison = distanceKm ? compareEstimates({ distanceKm, transportModes, dailyBudget }) : null
 
-  // The first click sets the start, every later click sets or moves the end
-  const handleMapClick = (point) => {
+  // The first click sets the start, every later click sets or moves the end.
+  // Rounded like the trip card link, so the card shows exactly this trip.
+  const handleMapClick = ({ lat, lng }) => {
+    const point = { lat: Number(lat.toFixed(COORD_DECIMALS)), lng: Number(lng.toFixed(COORD_DECIMALS)) }
     if (!start) {
       setStart(point)
     } else {
@@ -104,24 +92,16 @@ export default function CustomPlanner() {
     [start, end, tooClose]
   )
 
-  // The trip card reads the same fields as a pre-planned trip; there is no country
+  // The trip card works the trip out again from the link, so the link can be shared
   const openTripCard = () => {
-    const named = (point) => ({ ...point, name: formatPoint(point, 2) })
-    const trip = {
-      country: null,
-      start: named(start),
-      end: named(end),
-      startPoint: formatPoint(start, 2),
-      endPoint: formatPoint(end, 2),
-      distance: distanceKm,
-      ...estimate,
-      budgetPerDay: dailyBudget,
-      transport: transportMode,
-      planningMode: 'custom',
-      canComplete: true,
-      reachableDistance: distanceKm,
-    }
-    navigate('/trip-card', { state: { trip } })
+    const search = tripSearch({
+      mode: 'custom',
+      from: start,
+      to: end,
+      transport: transportMode.id,
+      daily: dailyBudget,
+    })
+    navigate(`/trip-card?${search}`)
   }
 
   const instruction = !start

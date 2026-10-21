@@ -3,10 +3,12 @@ import { useMemo, useRef } from 'react'
 import RouteMap from '../components/RouteMap'
 import { tripMapPoints } from '../data/geo'
 import { progressText } from '../data/tripCalculator'
+import { tripFromSearch } from '../data/tripLink'
 
 export default function TripCard() {
   const location = useLocation()
-  const trip = location.state?.trip
+  // Worked out from the link, like the results page, so the card can be shared
+  const trip = useMemo(() => tripFromSearch(location.search)?.trip, [location.search])
   const cardRef = useRef(null)
 
   // Same points as the results page: the whole route, plus where an unfinished trip stops
@@ -15,8 +17,12 @@ export default function TripCard() {
   if (!trip) {
     return (
       <div className="trip-card-page empty-state">
-        <h1>No trip to show</h1>
-        <p>Plan a trip first to generate your card.</p>
+        <h1>{location.search ? 'Trip not found' : 'No trip to show'}</h1>
+        <p>
+          {location.search
+            ? "This link doesn't hold a whole trip. It may have been cut short."
+            : 'Plan a trip first to generate your card.'}
+        </p>
         <Link to="/planner" className="cta-button">Go to Planner</Link>
       </div>
     )
@@ -58,12 +64,14 @@ export default function TripCard() {
   const planAnotherPath = trip.country ? '/planner' : '/custom'
 
   const handleShare = async () => {
+    // This page's own address: it holds the whole trip
+    const link = window.location.href
     const progress = unfinished ? `\nGets ${progressText(trip)} of the way to ${trip.endPoint}` : ''
-    const text = `TIPROUTE Challenge\n${trip.country ?? 'My own route'}: ${trip.startPoint} \u2192 ${endPoint}${progress}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nPlan yours at tiproute.app`
+    const text = `TIPROUTE Challenge\n${trip.country ?? 'My own route'}: ${trip.startPoint} \u2192 ${endPoint}${progress}\n${trip.transport.emoji} ${trip.transport.name} | ${days} days | $${trip.totalBudget.toLocaleString()}\nDifficulty: ${trip.difficulty.label} (${trip.difficulty.score}/5)\n\nSee this trip: ${link}`
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'TipRoute Challenge', text })
+        await navigator.share({ title: 'TipRoute Challenge', text, url: link })
       } catch {
         // User cancelled
       }

@@ -1,18 +1,21 @@
 import { useMemo } from 'react'
-import { useLocation, useNavigate, Link } from 'react-router-dom'
+import { useLocation, useNavigate, Link, Navigate } from 'react-router-dom'
 import RouteMap from '../components/RouteMap'
 import ComparisonTable from '../components/ComparisonTable'
 import { DIFFICULTY_COLORS } from '../components/difficultyColors'
 import { tripMapPoints } from '../data/geo'
 import { routeProgress } from '../data/tripCalculator'
+import { tripFromSearch } from '../data/tripLink'
 import { getRouteLines } from '../data/routes'
 import { ROUTE_LINE_COUNT, ROUTE_LINE_STYLE } from '../components/routeLineStyle'
 
 export default function Results() {
   const location = useLocation()
   const navigate = useNavigate()
-  const trip = location.state?.trip
-  const comparison = location.state?.comparison
+  // The trip is worked out from the link, so a shared link shows the same trip
+  const planned = useMemo(() => tripFromSearch(location.search), [location.search])
+  const trip = planned?.trip
+  const comparison = planned?.comparison
 
   // Kept stable between renders so the map does not zoom back on every render.
   // Always the full route; an unfinished "I have time" trip also marks where it stops.
@@ -34,11 +37,20 @@ export default function Results() {
     [start, end, routeCheckpoints]
   )
 
+  // A "plan your own trip" link has no country route to show here, only a trip card
+  if (trip?.planningMode === 'custom') {
+    return <Navigate to={`/trip-card${location.search}`} replace />
+  }
+
   if (!trip) {
     return (
       <div className="results empty-state">
-        <h1>No trip planned yet</h1>
-        <p>Head to the planner to create your adventure.</p>
+        <h1>{location.search ? 'Trip not found' : 'No trip planned yet'}</h1>
+        <p>
+          {location.search
+            ? "This link doesn't hold a whole trip. It may have been cut short. Plan it again in the planner."
+            : 'Head to the planner to create your adventure.'}
+        </p>
         <Link to="/planner" className="cta-button">Go to Planner</Link>
       </div>
     )
@@ -205,7 +217,7 @@ export default function Results() {
 
       {/* Actions */}
       <div className="results-actions">
-        <button className="cta-button" onClick={() => navigate('/trip-card', { state: { trip } })}>
+        <button className="cta-button" onClick={() => navigate(`/trip-card${location.search}`)}>
           Generate Trip Card
         </button>
         <button className="secondary-button" onClick={() => navigate('/planner')}>
