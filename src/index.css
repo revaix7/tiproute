@@ -128,9 +128,15 @@ h3 {
   color: var(--ink);
 }
 
-.secondary-button:hover {
+.secondary-button:hover:not(:disabled) {
   background: var(--ink);
   color: var(--bg);
+}
+
+.secondary-button:disabled {
+  border-color: var(--rule-soft);
+  color: var(--ink-muted);
+  cursor: not-allowed;
 }
 
 /* ============================================
@@ -139,7 +145,7 @@ h3 {
 
 .home,
 .choose-trip,
-.custom-trip,
+.custom-planner,
 .planner,
 .results,
 .trip-card-page {
@@ -850,6 +856,39 @@ h3 {
   font-weight: 600;
 }
 
+/* Plan your own trip */
+.map-instruction {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.route-map.route-map-large {
+  height: 560px;
+  cursor: crosshair;
+}
+
+.picked-points {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1.5rem;
+  align-items: end;
+  margin-top: 1.5rem;
+}
+
+.picked-point {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 0.75rem;
+}
+
+.picked-coords {
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */
@@ -900,6 +939,18 @@ h3 {
 
   .route-map {
     height: 300px;
+  }
+
+  .route-map.route-map-large {
+    height: 380px;
+  }
+
+  .map-instruction {
+    font-size: 1.2rem;
+  }
+
+  .picked-points {
+    grid-template-columns: 1fr;
   }
 
   .checkpoint {
